@@ -7,6 +7,25 @@ from mysg.ranges import read_ranges, write_ranges, select_required_ranges
 from mysg.util import create_dir, random_id
 
 
+VALID = []
+VALID.append(['-', 's'])
+VALID.append(['-', 'd'])
+VALID.append(['-', 'u', 'p'])
+VALID.append(['-', 'c'])
+VALID.append(['-', 'h'])
+VALID.append(['-', 'm'])
+VALID.append(['-', 'a'])
+VALID.append(['-', 'g'])
+VALID.append(['-', 'p'])
+VALID.append(['-', 'c'])
+
+
+def _check_set_name(set_name):
+    for i, letter in enumerate(set_name):
+        if letter not in VALID[i]:
+            raise Exception("Letter %i cannot be %s" % (i + 1, letter))
+
+
 def sample_set_models(set_name, number, seed=123456789):
 
     # Ensure reproducibility
@@ -58,6 +77,9 @@ def make_set_dir(set_name, ranges_file):
     Given the name of a model set and a file containing ranges, set up the
     directory with a subset of the ranges file
     '''
+
+    # Check set name
+    _check_set_name(set_name)
 
     # Read in ranges
     ranges = read_ranges(ranges_file)

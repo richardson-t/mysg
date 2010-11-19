@@ -1,6 +1,10 @@
 from mysg.odict import odict
 
 
+def _fixed(value):
+    return {'sampling': 'fixed', 'value': value}
+
+
 def write_ranges(filename, ranges):
     "Write a file containing information about ranges for each parameter"
     f = open(filename, 'wb')
@@ -61,16 +65,14 @@ def select_required_ranges(set_name, ranges):
         required += ['envelope.rmin', 'envelope.power', 'envelope.mass']
     if set_name[3] == 'c':
         required += ['cavity.theta0', 'cavity.rho0', 'cavity.rho_exp', 'cavity.power']
-    if set_name[4] == 'm':
-        required += ['ambient.density', 'ambient.temperature']
-    if set_name[5] == 'h':
+    if set_name[4] == 'h':
         if set_name[1] == 'd':
             required += ['disk.rmin']
         if set_name[1] == 'e':
             required += ['envelope.rmin']
     if set_name[6] == 'a':
         required += ['disk.lacc']
-    if set_name[7] == 'g'
+    if set_name[7] == 'g':
         required += ['disk.eta']
 
     for parameter in required:
@@ -86,13 +88,16 @@ def select_required_ranges(set_name, ranges):
             ranges_new[parameter] = ranges[parameter]
 
     # Sets parameters that depend on flags
+    if set_name[5] == 'm':
+        ranges['ambient.rho'] = _fixed(1.e-22)
+        ranges['ambient.temperature'] = _fixed(10.)
     if set_name[8] == 'g':
-        ranges['disk.dust.amax'] = 1000.
+        ranges['disk.dust.amax'] = _fixed(1000.)
     if set_name[9] == 'p':
-        ranges['disk.dust.pah_frac'] = 0.18
-        ranges['envelope.dust.pah_frac'] = 0.18
-        ranges['cavity.dust.pah_frac'] = 0.18
-        ranges['ambient.dust.pah_frac'] = 0.18
+        ranges['disk.dust.pah_frac'] = _fixed(0.18)
+        ranges['envelope.dust.pah_frac'] = _fixed(0.18)
+        ranges['cavity.dust.pah_frac'] = _fixed(0.18)
+        ranges['ambient.dust.pah_frac'] = _fixed(0.18)
 
     return ranges_new
 
