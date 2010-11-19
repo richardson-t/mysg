@@ -1,0 +1,83 @@
+import random
+
+import numpy as np
+import atpy
+
+from mysg.odict import odict
+from mysg.ranges import read_ranges, write_ranges
+from mysg.util import create_dir, random_id
+from mysg.parameters import required_parameters
+
+
+def sample_models(model_name, number, seed=123456789):
+
+    # Ensure reproducibility
+    random.seed(seed)
+    np.random.seed(seed=seed)
+
+    # Read in the ranges
+    ranges = read_ranges("models/%s/ranges.conf" % model_name)
+
+    # First pass, sample all values that need to be sampled
+    values = atpy.Table()
+    for name in ranges:
+        par = ranges[name]
+        if par['sampling'] == 'linear':
+            values.add_column(name, np.random.uniform(par['lower'],
+                                                      par['upper'],
+                                                      number))
+        elif par['sampling'] == 'log10':
+            values.add_column(name,
+                              10. ** np.random.uniform(np.log10(par['lower']),
+                                                       np.log10(par['upper']),
+                                                       number))
+        elif par['sampling'] == 'linked':
+            pass
+        else:
+            raise Exception("Unknown sampling: %s" % par['sampling'])
+
+    # Second pass, deal with linked parameters
+    for name in ranges:
+        if ranges[name]['sampling'] == 'linked':
+            values.add_column(name, values[ranges[name]['parameter']])
+
+    # Write out parameter files
+    create_dir("models/%s/par" % model_name)
+
+    for i in range(len(values)):
+        model_id = random_id()
+        f = open("models/%s/par/%s.par" % (model_name, model_id), 'wb')
+        for name in values.columns:
+            f.write("%s = %9.3e\n" % (name, values[name][i]))
+        f.close()
+
+    # Write out table
+    values.write("models/%s/parameters.hdf5" % model_name)
+
+
+def make_model_dir(model_name, ranges_file):
+    '''
+    Given the name of a model set and a file containing ranges, set up the
+    directory with a subset of the ranges file
+    '''
+
+    # Find out which parameters are required
+    required = required_parameters(model_name)
+
+    # Read in ranges
+    ranges = read_ranges(ranges_file)
+
+    # Define new subset of ranges
+    ranges_new = odict()
+    for parameter in required:
+        if ranges[parameter]['sampling'] == 'linked' \
+           and ranges[parameter]['parameter'] not in required:
+            ranges_new[parameter] = ranges[ranges[parameter]['parameter']]
+        else:
+            ranges_new[parameter] = ranges[parameter]
+
+    # Create directory
+    create_dir('models/%s' % model_name)
+
+    # Write out ranges file
+    write_ranges('models/%s/ranges.conf' % model_name, ranges_new)
