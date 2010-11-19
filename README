@@ -1,0 +1,47 @@
+Set names
+=========
+
+The grid names use the following convention: each letter position
+represents a different component or variant in the model, and the letter
+itself indicates the nature of the component if multiple ones are possible.
+If the letter is '-', the component is not present.
+
+The convention for the set names is:
+
+1   s    Spherical source with limb darkening
+         Adds: star.radius, star.temperature
+
+2   d    Flared disk
+         Adds: disk.mass, disk.rmin, disk.rmax, disk.beta, disk.h100
+
+3   u    Ulrich envelope
+         Adds: envelope.rmin, envelope.rc, envelope.rho0
+
+    p    Power-law envelope
+         Adds: envelope.rmin, envelope.mass, envelope.power
+
+    t    Terebey/Shu/Cassen envelope
+         Adds: undefined
+
+4   c    Bipolar cavity (power-law)
+         Adds: cavity.power, cavity.theta0, cavity.rho0, cavity.rho_exp
+
+5   m    Typical ambient medium (10K, 10^2/cm^3) included
+         Adds: ambient.temperature, ambient.rho
+
+6   h    Inner hole can be greater than dust sublimation
+         Adds: disk.rmin, envelope.rmin (as needed)
+
+7   a    Disk accretion luminosity included
+         Adds: disk.lacc
+
+8   g    Grain growth + settling
+         Adds: disk.eta
+         Sets: disk.dust.amax
+
+9   p    PAH/VSG included
+         Sets: disk/cavity/envelope/ambient.dust.pah_frac
+          
+10  c    Clumpiness
+         Adds: undefined
+
