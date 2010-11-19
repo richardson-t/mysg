@@ -9,6 +9,9 @@ def write_ranges(filename, ranges):
         if par['sampling'] in ['log10', 'linear']:
             f.write("%-20s %-10s %9.3e  %9.3e\n"
                     % (name, par['sampling'], par['lower'], par['upper']))
+        elif par['sampling'] in ['fixed']:
+            f.write("%-20s %-10s %9.3e\n"
+                    % (name, par['sampling'], par['value']))
         elif par['sampling'] in ['linked']:
             f.write("%-20s %-10s %s\n"
                     % (name, par['sampling'], par['parameter']))
@@ -29,6 +32,8 @@ def read_ranges(filename):
             lower, upper = details.split()
             ranges[name]['lower'] = float(lower)
             ranges[name]['upper'] = float(upper)
+        if sampling in ['fixed']:
+            ranges[name]['value'] = float(details)
         elif sampling == 'linked':
             ranges[name]['parameter'] = details
         else:

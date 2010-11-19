@@ -31,6 +31,8 @@ def sample_set_models(set_name, number, seed=123456789):
                               10. ** np.random.uniform(np.log10(par['lower']),
                                                        np.log10(par['upper']),
                                                        number))
+        elif par['sampling'] == 'fixed':
+            values.add_column(name, np.repeat(par['value'], number))
         elif par['sampling'] == 'linked':
             pass
         else:
