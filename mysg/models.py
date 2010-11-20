@@ -5,7 +5,8 @@ import atpy
 
 from mysg.ranges import read_ranges, write_ranges, select_required_ranges
 from mysg.util import create_dir, random_id
-
+from mysg.parameters import write_parfile
+from mysg.odict import odict
 
 VALID = []
 VALID.append(['-', 's'])
@@ -60,13 +61,7 @@ def sample_set_models(set_name, number, seed=123456789):
 
     for i in range(len(values)):
         model_name = random_id()
-        f = open("models/%s/par/%s.par" % (set_name, model_name), 'wb')
-        for name in values.columns:
-            if type(values[name][i]) not in [str, np.string_]:
-                f.write("%s = %9.3e\n" % (name, values[name][i]))
-            else:
-                f.write("%s = %s\n" % (name, values[name][i]))
-        f.close()
+        write_parfile("models/%s/par/%s.par" % (set_name, model_name), odict(zip(values.keys(), values[i])))
 
     # Write out table
     values.write("models/%s/parameters.hdf5" % set_name)
