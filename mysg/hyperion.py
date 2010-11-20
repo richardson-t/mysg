@@ -7,7 +7,7 @@ from mysg.parameters import read_parfile
 from mysg.atmosphere import interp_atmos
 
 
-def set_up_model(parfile):
+def setup_model(parfile):
 
     # Set dust sublimation temperature
     tsub = 1600.
