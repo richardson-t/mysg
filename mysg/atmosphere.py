@@ -20,7 +20,7 @@ TEFF_P = np.array([os.path.basename(model)[2:7] for model in MODELS_P],
 TABLES_P = [atpy.Table(model, verbose=False, masked=False) for model in MODELS_P]
 
 
-def interpolate(tval):
+def interp_atmos(tval):
 
     # Decide which set of atmospheres to use
     if tval < 4000.:
