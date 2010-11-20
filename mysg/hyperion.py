@@ -15,6 +15,11 @@ def setup_model(parfile):
     # Read in model parameters
     par = read_parfile(parfile, nested=True)
 
+    # Set default dust if needed
+    for component in ['disk', 'envelope', 'cavity', 'ambient']:
+        if component in par and 'dust' not in par[component]:
+            par[component] = 'kmh.hdf5'
+
     # Set up model
     m = AnalyticalYSOModel()
 
@@ -145,7 +150,7 @@ def setup_model(parfile):
 
         # Basic parameters
         cavity.power = par['cavity']['power']
-        cavity.r_0 = par['cavity']['r_0']
+        cavity.r_0 = 10000 * au
         cavity.theta_0 = par['cavity']['theta_0']
         cavity.rho_0 = par['cavity']['rho_0']
         cavity.rho_exp = par['cavity']['rho_exp']
@@ -165,7 +170,7 @@ def setup_model(parfile):
     # Set up SEDs
     image = m.add_peeled_images()
     image.set_wavelength_range(250, 0.001, 5000.)
-    image.set_image_size(1,1)
+    image.set_image_size(1, 1)
     image.set_image_limits(-np.inf, np.inf, -np.inf, np.inf)
     image.set_aperture_range(1, np.inf, np.inf)  # needs changing
     image.set_output_bytes(4)
