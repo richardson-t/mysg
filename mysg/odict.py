@@ -3,9 +3,13 @@ import numpy as np
 
 class odict(object):
 
-    def __init__(self):
-        self.keys = []
-        self.values = []
+    def __init__(self, *args):
+        if len(args) == 0:
+            self.keys = []
+            self.values = []
+        elif len(args) == 1:
+            self.keys = [arg[0] for arg in args[0]]
+            self.values = [arg[1] for arg in args[0]]
 
     def __setitem__(self, key, value):
         if type(key) == int:
