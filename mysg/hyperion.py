@@ -3,6 +3,7 @@ import numpy as np
 from hyperionrt.model import AnalyticalYSOModel
 from hyperionrt.util.constants import msun, rsun, au, pi, sigma, c
 from hyperionrt.dust import SphericalDust
+
 from mysg.parameters import read_parfile
 from mysg.atmosphere import interp_atmos
 
@@ -23,20 +24,17 @@ def setup_model(parfile):
     # Set up model
     m = AnalyticalYSOModel()
 
-    if 'star' in par:
-
-        # Set radius and luminosity
-        m.star.radius = par['star']['radius'] * rsun
-        m.star.luminosity = 4. * pi * par['star']['radius'] * rsun * sigma \
-                            * par['star']['temperature'] ** 4.
-
-        # Interpolate and set spectrum
-        nu, fnu = interp_atmos(par['star']['temperature'])
-        m.star.spectrum = (nu, fnu)
-
-    else:
-
+    if not 'star' in par:
         raise Exception("Cannot compute a model without a central source")
+
+    # Set radius and luminosity
+    m.star.radius = par['star']['radius'] * rsun
+    m.star.luminosity = 4. * pi * par['star']['radius'] * rsun * sigma \
+                        * par['star']['temperature'] ** 4.
+
+    # Interpolate and set spectrum
+    nu, fnu = interp_atmos(par['star']['temperature'])
+    m.star.spectrum = (nu, fnu)
 
     if 'disk' in par:
 
@@ -144,6 +142,9 @@ def setup_model(parfile):
             envelope.rmin *= par['envelope']['rmin']
 
     if 'cavity' in par:
+
+        if not 'envelope' in par:
+            raise Exception("Can't have a bipolar cavity without an envelope")
 
         # Add the bipolar cavity component
         cavity = envelope.add_bipolar_cavity()
