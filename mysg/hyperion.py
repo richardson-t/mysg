@@ -155,4 +155,17 @@ def setup_model(parfile):
 
     if 'ambient' in par:
 
+        # This is where we set the envelope outer radius
         pass
+
+    # Set up run-time parameters
+    m.set_raytracing(True)
+    m.set_mrw(True, gamma=2.)
+
+    # Set up SEDs
+    image = m.add_peeled_images()
+    image.set_wavelength_range(250, 0.001, 5000.)
+    image.set_image_size(1,1)
+    image.set_image_limits(-np.inf, np.inf, -np.inf, np.inf)
+    image.set_aperture_range(1, np.inf, np.inf)  # needs changing
+    image.set_output_bytes(4)
