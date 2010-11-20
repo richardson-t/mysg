@@ -1,5 +1,7 @@
+import numpy as np
+
 from hyperionrt.model import AnalyticalYSOModel
-from hyperionrt.util.constants import msun, rsun, au, pi, sigma
+from hyperionrt.util.constants import msun, rsun, au, pi, sigma, c
 from hyperionrt.dust import SphericalDust
 from mysg.parameters import read_parfile
 from mysg.atmosphere import interp_atmos
@@ -33,6 +35,28 @@ def set_up_model(parfile):
 
     if 'disk' in par:
 
+        # Accretion
+        if 'lacc' in par['disk']:
+
+            # Total luminosity of accretion shock on star
+            lshock = par['disk']['lacc'] / 2.
+
+            # Hot spot parameters
+            fspot = 0.05
+            fluxratio = 0.5 * lshock / m.star.luminosity / fspot
+            tshock = par['star']['temperature'] * (1 + fluxratio) ** 0.25  # K
+            m.star.luminosity *= 1 - fspot
+            m.star.sources['uv'].luminosity = lshock / 2. \
+                                            + m.star.luminosity * fspot
+            m.star.sources['uv'].temperature = tshock
+
+            # X-rays
+            wav = np.logspace(-3., -2., 100)[::-1]
+            nu = c * 1.e4 / wav
+            fnu = np.repeat(1., nu.shape)
+            m.star.sources['xray'].luminosity = lshock / 2.
+            m.star.sources['xray'].spectrum = (nu, fnu)
+
         # Add the flared disk component
         disk = m.add_flared_disk()
 
@@ -64,10 +88,6 @@ def set_up_model(parfile):
         # Settling
         if 'eta' in par['disk']:
             raise Exception("Dust settling implemented")
-
-        # Accretion
-        if 'lacc' in par['disk']:
-            raise Exception("Disk accretion luminosity not implemented")
 
     if 'envelope' in par:
 
