@@ -80,8 +80,11 @@ def set_up_model(parfile):
         disk.h0 = par['disk']['h100']
         disk.r0 = 100. * au
 
+        # Set dust
+        disk.dust = par['disk']['dust']
+
         # Read in dust file
-        d = SphericalDust(par['disk']['dust'])
+        d = SphericalDust(disk.dust)
 
         # Find the effective temperature, and spectrum of the central source
         # including accretion emission
@@ -115,8 +118,11 @@ def set_up_model(parfile):
             envelope.power = par['envelope']['power']
             envelope.mass = par['envelope']['mass'] * msun
 
+        # Set dust
+        envelope.dust = par['envelope']['dust']
+
         # Read in dust file
-        d = SphericalDust(par['envelope']['dust'])
+        d = SphericalDust(envelope.dust)
 
         # Find the effective temperature, and spectrum of the central source
         # including accretion emission
@@ -134,7 +140,18 @@ def set_up_model(parfile):
 
     if 'cavity' in par:
 
-        pass
+        # Add the bipolar cavity component
+        cavity = envelope.add_bipolar_cavity()
+
+        # Basic parameters
+        cavity.power = par['cavity']['power']
+        cavity.r_0 = par['cavity']['r_0']
+        cavity.theta_0 = par['cavity']['theta_0']
+        cavity.rho_0 = par['cavity']['rho_0']
+        cavity.rho_exp = par['cavity']['rho_exp']
+
+        # Set dust
+        cavity.dust = par['cavity']['dust']
 
     if 'ambient' in par:
 
