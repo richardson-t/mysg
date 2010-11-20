@@ -35,17 +35,24 @@ def set_up_model(parfile):
 
     if 'disk' in par:
 
-        # Accretion
+        # Add the flared disk component
+        disk = m.add_flared_disk()
+
+        # Accretion luminosity
         if 'lacc' in par['disk']:
 
-            # Total luminosity of accretion shock on star
+            # Tell the model that we are including accretion
+            m.accretion = True
+
+            # Find the total luminosity of accretion shock on star
             lshock = par['disk']['lacc'] / 2.
 
             # Hot spot parameters
             fspot = 0.05
             fluxratio = 0.5 * lshock / m.star.luminosity / fspot
             tshock = par['star']['temperature'] * (1 + fluxratio) ** 0.25  # K
-            m.star.luminosity *= 1 - fspot
+
+            # Set the hot spot source
             m.star.sources['uv'].luminosity = lshock / 2. \
                                             + m.star.luminosity * fspot
             m.star.sources['uv'].temperature = tshock
@@ -54,11 +61,16 @@ def set_up_model(parfile):
             wav = np.logspace(-3., -2., 100)[::-1]
             nu = c * 1.e4 / wav
             fnu = np.repeat(1., nu.shape)
+
+            # Set the X-ray source
             m.star.sources['xray'].luminosity = lshock / 2.
             m.star.sources['xray'].spectrum = (nu, fnu)
 
-        # Add the flared disk component
-        disk = m.add_flared_disk()
+            # Reduce the total luminosity from the original source
+            m.star.luminosity *= 1 - fspot
+
+            # Set luminosity from viscous dissipation in disk
+            disk.lacc = par['disk']['lacc'] / 2.  # incorrect
 
         # Basic parameters
         disk.mass = par['disk']['mass'] * msun
