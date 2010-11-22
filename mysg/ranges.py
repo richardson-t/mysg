@@ -71,7 +71,7 @@ def select_required_ranges(set_name, ranges):
         if set_name[1] == 'e':
             required += ['envelope.rmin']
     if set_name[6] == 'a':
-        required += ['disk.lacc']
+        required += ['disk.rtrunc', 'disk.lacc']
     if set_name[7] == 'g':
         required += ['disk.eta']
 
