@@ -1,8 +1,12 @@
+from __future__ import absolute_import
+
+import os
+
 import numpy as np
 
-from hyperionrt.model import AnalyticalYSOModel
-from hyperionrt.util.constants import msun, rsun, au, pi, sigma, lsun
-from hyperionrt.util.convenience import OptThinRadius
+from hyperion.model import AnalyticalYSOModel
+from hyperion.util.constants import msun, rsun, au, pi, sigma, lsun
+from hyperion.util.convenience import OptThinRadius
 
 from mysg.parameters import read_parfile
 from mysg.atmosphere import interp_atmos
@@ -19,18 +23,18 @@ def setup_model(parfile):
     # Set default dust if needed
     for component in ['disk', 'envelope', 'cavity', 'ambient']:
         if component in par and 'dust' not in par[component]:
-            par[component] = 'kmh.hdf5'
+            par[component]['dust'] = 'kmh.hdf5'
 
     # Set up model
-    m = AnalyticalYSOModel()
+    m = AnalyticalYSOModel(parfile)
 
     if not 'star' in par:
         raise Exception("Cannot compute a model without a central source")
 
     # Set radius and luminosity
     m.star.radius = par['star']['radius'] * rsun
-    m.star.luminosity = 4. * pi * par['star']['radius'] * rsun * sigma \
-                        * par['star']['temperature'] ** 4.
+    m.star.luminosity = 4. * pi * (par['star']['radius'] * rsun) ** 2. \
+                        * sigma * par['star']['temperature'] ** 4.
 
     # Interpolate and set spectrum
     nu, fnu = interp_atmos(par['star']['temperature'])
@@ -43,11 +47,11 @@ def setup_model(parfile):
 
         # Basic parameters
         disk.mass = par['disk']['mass'] * msun
-        disk.rmax = par['disk']['rmaxd'] * au
+        disk.rmax = par['disk']['rmax'] * au
         disk.alpha = par['disk']['beta'] + 1
         disk.beta = par['disk']['beta']
-        disk.h0 = par['disk']['h100']
-        disk.r0 = 100. * au
+        disk.h_0 = par['disk']['h100']
+        disk.r_0 = 100. * au
 
         # Set dust
         disk.dust = par['disk']['dust']
@@ -72,7 +76,7 @@ def setup_model(parfile):
         if 'rc' in par['envelope']:  # Ulrich envelope
 
             envelope = m.add_ulrich_envelope()
-            envelope.rho0 = par['envelope']['rho0']
+            envelope.rho_0 = par['envelope']['rho0']
             envelope.rc = par['envelope']['rc'] * au
 
         elif 'power' in par['envelope']:  # Power-law envelope
@@ -124,3 +128,7 @@ def setup_model(parfile):
     image.set_image_limits(-np.inf, np.inf, -np.inf, np.inf)
     image.set_aperture_range(1, np.inf, np.inf)  # needs changing
     image.set_output_bytes(4)
+
+    m.set_spherical_polar_grid_auto(399, 199, 1)
+
+    m.write()

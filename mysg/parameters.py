@@ -17,8 +17,8 @@ def read_parfile(filename, nested=False):
     parameters = odict()
     f = open(filename, 'rb')
     for line in f.readlines():
-        print line
         key, value = line.strip().split('=')
+        key, value = key.strip(), float(value)
         if nested:
             p = parameters
             components = key.split('.')
