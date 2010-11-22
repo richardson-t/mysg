@@ -1,17 +1,17 @@
 import numpy as np
 
 from hyperionrt.model import AnalyticalYSOModel
-from hyperionrt.util.constants import msun, rsun, au, pi, sigma, c
-from hyperionrt.dust import SphericalDust
+from hyperionrt.util.constants import msun, rsun, au, pi, sigma, lsun
+from hyperionrt.util.convenience import OptThinRadius
 
 from mysg.parameters import read_parfile
 from mysg.atmosphere import interp_atmos
 
+# Set dust sublimation temperature
+tsub = 1600.
+
 
 def setup_model(parfile):
-
-    # Set dust sublimation temperature
-    tsub = 1600.
 
     # Read in model parameters
     par = read_parfile(parfile, nested=True)
@@ -41,40 +41,6 @@ def setup_model(parfile):
         # Add the flared disk component
         disk = m.add_flared_disk()
 
-        # Accretion luminosity
-        if 'lacc' in par['disk']:
-
-            # Tell the model that we are including accretion
-            m.accretion = True
-
-            # Find the total luminosity of accretion shock on star
-            lshock = par['disk']['lacc'] / 2.
-
-            # Hot spot parameters
-            fspot = 0.05
-            fluxratio = 0.5 * lshock / m.star.luminosity / fspot
-            tshock = par['star']['temperature'] * (1 + fluxratio) ** 0.25  # K
-
-            # Set the hot spot source
-            m.star.sources['uv'].luminosity = lshock / 2. \
-                                            + m.star.luminosity * fspot
-            m.star.sources['uv'].temperature = tshock
-
-            # X-rays
-            wav = np.logspace(-3., -2., 100)[::-1]
-            nu = c * 1.e4 / wav
-            fnu = np.repeat(1., nu.shape)
-
-            # Set the X-ray source
-            m.star.sources['xray'].luminosity = lshock / 2.
-            m.star.sources['xray'].spectrum = (nu, fnu)
-
-            # Reduce the total luminosity from the original source
-            m.star.luminosity *= 1 - fspot
-
-            # Set luminosity from viscous dissipation in disk
-            disk.lacc = par['disk']['lacc'] / 2.  # incorrect
-
         # Basic parameters
         disk.mass = par['disk']['mass'] * msun
         disk.rmax = par['disk']['rmaxd'] * au
@@ -86,26 +52,20 @@ def setup_model(parfile):
         # Set dust
         disk.dust = par['disk']['dust']
 
-        # Read in dust file
-        d = SphericalDust(disk.dust)
-
-        # Find the effective temperature, and spectrum of the central source
-        # including accretion emission
-        teff = m.star.effective_temperature()
-        nu, fnu = m.star.total_spectrum()
-
-        # Find the dust sublimation radius
-        disk.rmin = m.star.radius * (1. - (1. - 2. * (tsub / teff) ** 4. \
-                    * d.kappa_planck_temperature(tsub) \
-                    / d.kappa_planck_spectrum(nu, fnu)) ** 2.) ** -0.5
-
         # Inner radius
         if 'rmin' in par['disk']:
-            disk.rmin *= par['disk']['rmin']
+            disk.rmin = par['disk']['rmin'] * OptThinRadius(tsub)
+        else:
+            disk.rmin = OptThinRadius(tsub)
 
         # Settling
         if 'eta' in par['disk']:
             raise Exception("Dust settling implemented")
+
+        # Accretion luminosity
+        if 'lacc' in par['disk']:
+            m.add_magnetospheric_accretion(par['disk']['lacc'] * lsun,
+                                           par['rtrunc'], par['fspot'], disk)
 
     if 'envelope' in par:
 
@@ -124,22 +84,11 @@ def setup_model(parfile):
         # Set dust
         envelope.dust = par['envelope']['dust']
 
-        # Read in dust file
-        d = SphericalDust(envelope.dust)
-
-        # Find the effective temperature, and spectrum of the central source
-        # including accretion emission
-        teff = m.star.effective_temperature()
-        nu, fnu = m.star.total_spectrum()
-
-        # Find the dust sublimation radius
-        envelope.rmin = m.star.radius * (1. - (1. - 2. * (tsub / teff) ** 4. \
-                        * d.kappa_planck_temperature(tsub) \
-                        / d.kappa_planck_spectrum(nu, fnu)) ** 2.) ** -0.5
-
         # Inner radius
         if 'rmin' in par['envelope']:
-            envelope.rmin *= par['envelope']['rmin']
+            envelope.rmin = par['envelope']['rmin'] * OptThinRadius(tsub)
+        else:
+            envelope.rmin = OptThinRadius(tsub)
 
     if 'cavity' in par:
 
