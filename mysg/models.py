@@ -58,13 +58,15 @@ def sample_set_models(set_name, number, seed=123456789):
 
     # Write out parameter files
     create_dir("models/%s/par" % set_name)
+    create_dir("models/%s/input" % set_name)
+    create_dir("models/%s/output" % set_name)
 
     for i in range(len(values)):
         model_name = random_id()
         write_parfile("models/%s/par/%s.par" % (set_name, model_name), odict(zip(values.keys(), values[i])))
 
     # Write out table
-    values.write("models/%s/parameters.hdf5" % set_name)
+    values.write("models/%s/parameters.hdf5" % set_name, verbose=False)
 
 
 def make_set_dir(set_name, ranges_file):
