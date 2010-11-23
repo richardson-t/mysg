@@ -15,7 +15,7 @@ from mysg.atmosphere import interp_atmos
 tsub = 1600.
 
 
-def setup_model(parfile):
+def setup_model(parfile, output):
 
     # Read in model parameters
     par = read_parfile(parfile, nested=True)
@@ -26,7 +26,7 @@ def setup_model(parfile):
             par[component]['dust'] = 'kmh.hdf5'
 
     # Set up model
-    m = AnalyticalYSOModel(parfile)
+    m = AnalyticalYSOModel(output)
 
     if not 'star' in par:
         raise Exception("Cannot compute a model without a central source")
@@ -50,7 +50,7 @@ def setup_model(parfile):
         disk.rmax = par['disk']['rmax'] * au
         disk.alpha = par['disk']['beta'] + 1
         disk.beta = par['disk']['beta']
-        disk.h_0 = par['disk']['h100']
+        disk.h_0 = par['disk']['h100'] * au
         disk.r_0 = 100. * au
 
         # Set dust
@@ -68,8 +68,9 @@ def setup_model(parfile):
 
         # Accretion luminosity
         if 'lacc' in par['disk']:
-            m.add_magnetospheric_accretion(par['disk']['lacc'] * lsun,
-                                           par['rtrunc'], par['fspot'], disk)
+            m.setup_magnetospheric_accretion(par['disk']['lacc'] * lsun,
+                                             par['disk']['rtrunc'],
+                                             par['star']['fspot'], disk)
 
     if 'envelope' in par:
 
@@ -113,9 +114,12 @@ def setup_model(parfile):
         cavity.dust = par['cavity']['dust']
 
     if 'ambient' in par:
-
-        # This is where we set the envelope outer radius
-        pass
+        ambient = m.add_ambient_medium()
+        ambient.rho = par['ambient']['density']
+        ambient.temperature = par['ambient']['temperature']
+        ambient.dust = par['ambient']['dust']
+        if 'envelope' in par:
+            envelope.rmax = OptThinRadius(ambient.temperature)
 
     # Set up run-time parameters
     m.set_raytracing(True)
@@ -128,7 +132,10 @@ def setup_model(parfile):
     image.set_image_limits(-np.inf, np.inf, -np.inf, np.inf)
     image.set_aperture_range(1, np.inf, np.inf)  # needs changing
     image.set_output_bytes(4)
+    image.set_viewing_angles(np.linspace(0., 90., 10), np.repeat(45., 10))
 
     m.set_spherical_polar_grid_auto(399, 199, 1)
+
+    m.set_n_photons(temperature=1000000, imaging=1000000, raytracing=100000)
 
     m.write()
