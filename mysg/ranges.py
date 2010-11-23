@@ -64,14 +64,14 @@ def select_required_ranges(set_name, ranges):
     if set_name[2] == 'p':
         required += ['envelope.rmin', 'envelope.power', 'envelope.mass']
     if set_name[3] == 'c':
-        required += ['cavity.theta0', 'cavity.rho0', 'cavity.rho_exp', 'cavity.power']
+        required += ['cavity.theta_0', 'cavity.rho_0', 'cavity.rho_exp', 'cavity.power']
     if set_name[4] == 'h':
         if set_name[1] == 'd':
             required += ['disk.rmin']
         if set_name[1] == 'e':
             required += ['envelope.rmin']
     if set_name[6] == 'a':
-        required += ['disk.rtrunc', 'disk.lacc']
+        required += ['disk.rtrunc', 'disk.lacc', 'star.fspot']
     if set_name[7] == 'g':
         required += ['disk.eta']
 
