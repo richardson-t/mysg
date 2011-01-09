@@ -114,28 +114,86 @@ def setup_model(parfile, output):
         cavity.dust = par['cavity']['dust']
 
     if 'ambient' in par:
+
+        # Add the ambient medium contribution
         ambient = m.add_ambient_medium()
+
+        # Set the density, temperature, and dust properties
         ambient.rho = par['ambient']['density']
         ambient.temperature = par['ambient']['temperature']
         ambient.dust = par['ambient']['dust']
+
+        # If there is an envelope, set the outer radius to where the
+        # optically thin temperature would transition to the ambient medium
+        # temperature
         if 'envelope' in par:
             envelope.rmax = OptThinRadius(ambient.temperature)
+
+        # The inner radius for the ambient medium should be the largest of
+        # the inner radii for the disk and envelope
+        if 'disk' in par and 'rmin' in par['disk']:
+            ambient.rmin = par['disk']['rmin'] * OptThinRadius(tsub)
+        if 'envelope' in par and 'rmin' in par['envelope']:
+            if 'disk' in par and 'rmin' in par['disk']:
+                ambient.rmin = max(par['disk']['rmin'], \
+                                   par['envelope']['rmin']) \
+                               * OptThinRadius(tsub)
+            else:
+                ambient.rmin = par['envelope']['rmin'] * OptThinRadius(tsub)
+        elif 'disk' in par and 'rmin' in par['disk']:
+            ambient.rmin = par['disk']['rmin'] * OptThinRadius(tsub)
+        else:
+            ambient.rmin = OptThinRadius(tsub)
+
+        # The ambient medium needs to go out to sqrt(3.) times the envelope
+        # radius to make sure the slab is full
+        ambient.rmax = OptThinRadius(ambient.temperature) * np.sqrt(3.)
+
+        # Make sure that the temperature in the model is always at least
+        # the ambient temperature
+        m.set_minimum_temperature(ambient.temperature)
+
+    else:
+
+        if 'envelope' in par:
+            envelope.rmax = OptThinRadius(2.725)
 
     # Set up run-time parameters
     m.set_raytracing(True)
     m.set_mrw(True, gamma=2.)
+    m.set_forced_first_scattering(True)
+    m.set_dust_sublimation('no')
+    m.set_output_bytes(4)
 
     # Set up SEDs
     image = m.add_peeled_images()
-    image.set_wavelength_range(250, 0.001, 5000.)
     image.set_image_size(1, 1)
     image.set_image_limits(-np.inf, np.inf, -np.inf, np.inf)
+    image.set_wavelength_range(250, 1.e-2, 1.e+4)
     image.set_aperture_range(1, np.inf, np.inf)  # needs changing
     image.set_output_bytes(4)
+    image.set_track_origin(True)
+    image.set_uncertainties(True)
     image.set_viewing_angles(np.linspace(0., 90., 10), np.repeat(45., 10))
+    image.set_depth(-np.inf, np.inf)
 
+    # Set grid
     m.set_spherical_polar_grid_auto(399, 199, 1)
 
-    m.set_n_photons(temperature=1000000, imaging=1000000, raytracing=100000)
+    # Set number of photons
+    m.set_n_photons(temperature=100000, imaging=100000,
+                    raytracing_sources=100000, raytracing_dust=100000,
+                    stats=10000)
 
-    m.write()
+    # Request 32-bit output
+    m.set_output_bytes(4)
+    
+    # Only request certain arrays to be output
+    m.conf.output.output_temperature = 'last'
+    m.conf.output.output_density = 'none'
+    m.conf.output.output_specific_energy_abs = 'none'
+    m.conf.output.output_n_photons = 'none'
+
+    # Write out file
+    m.write(copy_dust=False, absolute_paths=False,
+            physics_dtype=np.float32, wall_dtype=float)
