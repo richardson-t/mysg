@@ -89,15 +89,15 @@ def select_required_ranges(set_name, ranges):
 
     # Sets parameters that depend on flags
     if set_name[5] == 'm':
-        ranges['ambient.rho'] = _fixed(1.e-22)
-        ranges['ambient.temperature'] = _fixed(10.)
+        ranges_new['ambient.density'] = _fixed(1.e-22)
+        ranges_new['ambient.temperature'] = _fixed(10.)
     if set_name[8] == 'g':
-        ranges['disk.dust.amax'] = _fixed(1000.)
+        ranges_new['disk.dust.amax'] = _fixed(1000.)
     if set_name[9] == 'p':
-        ranges['disk.dust.pah_frac'] = _fixed(0.18)
-        ranges['envelope.dust.pah_frac'] = _fixed(0.18)
-        ranges['cavity.dust.pah_frac'] = _fixed(0.18)
-        ranges['ambient.dust.pah_frac'] = _fixed(0.18)
+        ranges_new['disk.dust.pah_frac'] = _fixed(0.18)
+        ranges_new['envelope.dust.pah_frac'] = _fixed(0.18)
+        ranges_new['cavity.dust.pah_frac'] = _fixed(0.18)
+        ranges_new['ambient.dust.pah_frac'] = _fixed(0.18)
 
     return ranges_new
 
