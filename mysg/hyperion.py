@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-import os
-
 import numpy as np
 
 from hyperion.model import AnalyticalYSOModel
@@ -159,27 +157,36 @@ def setup_model(parfile, output):
         if 'envelope' in par:
             envelope.rmax = OptThinRadius(2.725)
 
-    # Set up run-time parameters
+    # Use raytracing to improve s/n of thermal/source emission
     m.set_raytracing(True)
+
+    # Use the modified random walk
     m.set_mrw(True, gamma=2.)
+
+    # Improve s/n of scattering by forcing the first interaction
     m.set_forced_first_scattering(True)
-    m.set_dust_sublimation('no')
+
+    # Use slow dust sublimation
+    m.set_dust_sublimation('slow')
+
+    # Set physical array output to 32-bit
     m.set_output_bytes(4)
 
+    # Set up grid
+    m.set_spherical_polar_grid_auto(399, 199, 1)
+
+    # Find the range of radii spanned by the grid
+    rmin, rmax = m.radial_range()
+
     # Set up SEDs
-    image = m.add_peeled_images()
-    image.set_image_size(1, 1)
-    image.set_image_limits(-np.inf, np.inf, -np.inf, np.inf)
+    image = m.add_peeled_images(sed=True, image=False)
     image.set_wavelength_range(250, 1.e-2, 1.e+4)
-    image.set_aperture_range(1, np.inf, np.inf)  # needs changing
+    image.set_aperture_range(10, rmin, rmax)
     image.set_output_bytes(4)
     image.set_track_origin(True)
     image.set_uncertainties(True)
     image.set_viewing_angles(np.linspace(0., 90., 10), np.repeat(45., 10))
     image.set_depth(-np.inf, np.inf)
-
-    # Set grid
-    m.set_spherical_polar_grid_auto(399, 199, 1)
 
     # Set number of photons
     m.set_n_photons(temperature=100000, imaging=100000,
@@ -188,12 +195,13 @@ def setup_model(parfile, output):
 
     # Request 32-bit output
     m.set_output_bytes(4)
-    
+
     # Only request certain arrays to be output
-    m.conf.output.output_temperature = 'last'
+    m.conf.output.output_temperature = 'none'
     m.conf.output.output_density = 'none'
-    m.conf.output.output_specific_energy_abs = 'none'
+    m.conf.output.output_specific_energy_abs = 'last'
     m.conf.output.output_n_photons = 'none'
+    m.conf.output.output_density_diff = 'last'
 
     # Write out file
     m.write(copy_dust=False, absolute_paths=False,
