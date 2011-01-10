@@ -186,7 +186,7 @@ def setup_model(parfile, output):
     image = m.add_peeled_images(sed=True, image=False)
     image.set_wavelength_range(250, 1.e-2, 1.e+4)
     image.set_aperture_range(10, rmin, rmax)
-    image.set_output_bytes(4)
+    image.set_output_bytes(8)
     image.set_track_origin(True)
     image.set_uncertainties(True)
     image.set_viewing_angles(np.linspace(0., 90., 10), np.repeat(45., 10))
