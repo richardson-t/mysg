@@ -164,6 +164,9 @@ def setup_model(parfile, output):
     # Use the modified random walk
     m.set_mrw(True, gamma=2.)
 
+    # Use the partial diffusion approximation
+    m.set_pda(True)
+
     # Improve s/n of scattering by forcing the first interaction
     m.set_forced_first_scattering(True)
 
