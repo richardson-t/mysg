@@ -18,7 +18,10 @@ def read_parfile(filename, nested=False):
     f = open(filename, 'rb')
     for line in f.readlines():
         key, value = line.strip().split('=')
-        key, value = key.strip(), float(value)
+        try:
+            key, value = key.strip(), float(value)
+        except ValueError:
+            key, value = key.strip(), value.strip()
         if nested:
             p = parameters
             components = key.split('.')

@@ -10,15 +10,17 @@ from mysg.odict import odict
 
 VALID = []
 VALID.append(['-', 's'])
-VALID.append(['-', 'd'])
-VALID.append(['-', 'u', 'p'])
-VALID.append(['-', 'c'])
-VALID.append(['-', 'h'])
+VALID.append(['-', 'p', 'a'])
+VALID.append(['-', 'p', 'u'])
+VALID.append(['-', 'b'])
+VALID.append(['s', 'h'])
 VALID.append(['-', 'm'])
-VALID.append(['-', 'a'])
-VALID.append(['-', 'g'])
+VALID.append(['-', 'i'])
 VALID.append(['-', 'p'])
-VALID.append(['-', 'c'])
+VALID.append(['-'])
+VALID.append(['-'])
+VALID.append(['-'])
+VALID.append(['-'])
 
 
 def _check_set_name(set_name):
@@ -78,11 +80,8 @@ def make_set_dir(set_name, ranges_file):
     # Check set name
     _check_set_name(set_name)
 
-    # Read in ranges
-    ranges = read_ranges(ranges_file)
-
     # Select ranges that are actually needed
-    ranges = select_required_ranges(set_name, ranges)
+    ranges = select_required_ranges(set_name)
 
     # Create directory
     create_dir('models/%s' % set_name)

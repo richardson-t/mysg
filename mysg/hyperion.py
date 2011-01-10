@@ -77,14 +77,15 @@ def setup_model(parfile, output):
         if 'rc' in par['envelope']:  # Ulrich envelope
 
             envelope = m.add_ulrich_envelope()
-            envelope.rho_0 = par['envelope']['rho0']
+            envelope.rho_0 = par['envelope']['rho_0']
             envelope.rc = par['envelope']['rc'] * au
 
         elif 'power' in par['envelope']:  # Power-law envelope
 
-            envelope = m.add_powerlaw_envelope()
+            envelope = m.add_power_law_envelope()
             envelope.power = par['envelope']['power']
-            envelope.mass = par['envelope']['mass'] * msun
+            envelope.rho_0 = par['envelope']['rho_0']
+            envelope.r_0 = par['envelope']['r_0']
 
         # Set dust
         envelope.dust = par['envelope']['dust']
