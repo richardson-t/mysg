@@ -5,6 +5,7 @@ import numpy as np
 from hyperion.model import AnalyticalYSOModel
 from hyperion.util.constants import msun, rsun, au, pi, sigma, lsun
 from hyperion.util.convenience import OptThinRadius
+from hyperion.dust import SphericalDust
 
 from mysg.parameters import read_parfile
 from mysg.atmosphere import interp_atmos
@@ -46,13 +47,13 @@ def setup_model(parfile, output):
         # Basic parameters
         disk.mass = par['disk']['mass'] * msun
         disk.rmax = par['disk']['rmax'] * au
-        disk.alpha = par['disk']['beta'] + 1
+        disk.p = par['disk']['p']
         disk.beta = par['disk']['beta']
         disk.h_0 = par['disk']['h100'] * au
         disk.r_0 = 100. * au
 
         # Set dust
-        disk.dust = par['disk']['dust']
+        disk.dust = SphericalDust(par['disk']['dust'])
 
         # Inner radius
         if 'rmin' in par['disk']:
@@ -86,7 +87,7 @@ def setup_model(parfile, output):
             envelope.r_0 = par['envelope']['r_0']
 
         # Set dust
-        envelope.dust = par['envelope']['dust']
+        envelope.dust = SphericalDust(par['envelope']['dust'])
 
         # Inner radius
         if 'rmin' in par['envelope']:
@@ -110,7 +111,7 @@ def setup_model(parfile, output):
         cavity.rho_exp = par['cavity']['rho_exp']
 
         # Set dust
-        cavity.dust = par['cavity']['dust']
+        cavity.dust = SphericalDust(par['cavity']['dust'])
 
     if 'ambient' in par:
 
@@ -120,7 +121,7 @@ def setup_model(parfile, output):
         # Set the density, temperature, and dust properties
         ambient.rho = par['ambient']['density']
         ambient.temperature = par['ambient']['temperature']
-        ambient.dust = par['ambient']['dust']
+        ambient.dust = SphericalDust(par['ambient']['dust'])
 
         # If there is an envelope, set the outer radius to where the
         # optically thin temperature would transition to the ambient medium
@@ -189,8 +190,8 @@ def setup_model(parfile, output):
     image.set_depth(-np.inf, np.inf)
 
     # Set number of photons
-    m.set_n_photons(temperature=100000, imaging=100000,
-                    raytracing_sources=100000, raytracing_dust=100000,
+    m.set_n_photons(temperature=1000000, imaging=1000000,
+                    raytracing_sources=1000000, raytracing_dust=1000000,
                     stats=10000)
 
     # Request 32-bit output
@@ -202,6 +203,10 @@ def setup_model(parfile, output):
     m.conf.output.output_specific_energy_abs = 'last'
     m.conf.output.output_n_photons = 'none'
     m.conf.output.output_density_diff = 'last'
+
+    # Set number of temperature iterations and convergence criterion
+    m.set_n_temperature_iterations(10)
+    m.set_convergence(True, percentile=99.0, absolute=2.0, relative=1.1)
 
     # Write out file
     m.write(copy_dust=False, absolute_paths=False,
