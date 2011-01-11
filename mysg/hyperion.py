@@ -19,11 +19,6 @@ def setup_model(parfile, output):
     # Read in model parameters
     par = read_parfile(parfile, nested=True)
 
-    # Set default dust if needed
-    for component in ['disk', 'envelope', 'cavity', 'ambient']:
-        if component in par and 'dust' not in par[component]:
-            par[component]['dust'] = 'kmh.hdf5'
-
     # Set up model
     m = AnalyticalYSOModel(output)
 
