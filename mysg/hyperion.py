@@ -19,6 +19,16 @@ def setup_model(parfile, output):
     # Read in model parameters
     par = read_parfile(parfile, nested=True)
 
+    # Find dimensionality of problem:
+    if 'disk' in par:
+        ndim = 2
+    elif 'cavity' in par:
+        ndim = 2
+    elif 'envelope' in par and 'rc' in par['envelope']:
+        ndim = 2
+    else:
+        ndim = 1
+
     # Set up model
     m = AnalyticalYSOModel(output)
 
@@ -140,9 +150,10 @@ def setup_model(parfile, output):
         else:
             ambient.rmin = OptThinRadius(tsub)
 
-        # The ambient medium needs to go out to sqrt(3.) times the envelope
-        # radius to make sure the slab is full
-        ambient.rmax = OptThinRadius(ambient.temperature) * np.sqrt(3.)
+        # The ambient medium needs to go out to sqrt(2.) times the envelope
+        # radius to make sure the slab is full (don't need to do sqrt(3)
+        # because we only need a cylinder along line of sight)
+        ambient.rmax = OptThinRadius(ambient.temperature) * np.sqrt(2.)
 
         # Make sure that the temperature in the model is always at least
         # the ambient temperature
@@ -171,8 +182,11 @@ def setup_model(parfile, output):
     # Set physical array output to 32-bit
     m.set_output_bytes(4)
 
-    # Set up grid
-    m.set_spherical_polar_grid_auto(399, 199, 1)
+    # Set up grid.
+    if ndim == 1:
+        m.set_spherical_polar_grid_auto(399, 1, 1)
+    else:
+        m.set_spherical_polar_grid_auto(399, 199, 1)
 
     # Find the range of radii spanned by the grid
     rmin, rmax = m.radial_range()
@@ -188,9 +202,16 @@ def setup_model(parfile, output):
     image.set_depth(-np.inf, np.inf)
 
     # Set number of photons
-    m.set_n_photons(temperature=1000000, imaging=1000000,
-                    raytracing_sources=1000000, raytracing_dust=1000000,
-                    stats=10000)
+    if ndim == 1:
+        m.set_n_photons(temperature=100, imaging=1000,
+                        raytracing_sources=1000, raytracing_dust=1000,
+                        stats=10)
+    else:
+        m.set_n_photons(temperature=1000000, imaging=1000000,
+                        raytracing_sources=1000000, raytracing_dust=1000000,
+                        stats=10000)
+
+    print 'Dimensionality: ', ndim
 
     # Request 32-bit output
     m.set_output_bytes(4)
