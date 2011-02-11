@@ -39,7 +39,7 @@
 
 \subsection{Masses/Densities}
 
-In the following document, all masses/densities are dust masses/densities.
+In the following document, all masses/densities are \textbf{dust} masses/densities.
 
 \subsection{Optically thin radius}
 
@@ -83,7 +83,7 @@ The source type is indicated by the \textbf{first} letter of the set name:
 
 While it would be nice to define the stellar properties in terms of $\lstar$ and $\tstar$, $\lstar$ depends strongly on $\tstar$ (fourth power), so that all the pre-main-sequence tracks lie in a narrow diagonal range in a ($\lstar$, $\tstar$) diagram. Therefore, if one samples a uniform grid in these two parameters, most models are wasted in unphysical regions. Instead, we should define the grid in terms of $\tstar$ and $\rstar$, since these parameters are not as strongly correlated. The following figure shows the evolutionary tracks, and the proposed parameter space coverage. According to the tracks shown, a fraction of the models are still 'unphysical', but this is worth the unbiased coverage. The proposed coverage also goes to cooler and smaller objects than the current tracks include.
 
-For temperatures including and above 3,500\,K, we use the Castelli and Kurucz photosphere models. Since we are not defining the star in terms of mass, we can't calculate the surface gravity. However, the surface gravity doesn't have a large impact on stellar photospheres below 20,000\,K, and even above it's only a 5-10\% effect, relative to the log[g]=4.0 models. So above 3,500\,K we use Castelli and Kurucz for log[g]=4.0. For temperatures below 3,500\,K, we can use the new GAIA grid, which is computed with the PHOENIX code. Below 3,000\,K surface gravity seems to matter, up to a 10-15\% level. This is probably going to mostly affect the near-infrared fluxes. For these, we also use log[g]=4.0 models.
+For temperatures including and above 4,000\,K, we use the Castelli and Kurucz photosphere models. Since we are not defining the star in terms of mass, we can't calculate the surface gravity. However, the surface gravity doesn't have a large impact on stellar photospheres below 20,000\,K, and even above it's only a 5-10\% effect, relative to the log[g]=4.0 models. So above 4,000\,K we use Castelli and Kurucz for log[g]=4.0. For temperatures below 4,000\,K, we can use the new GAIA grid, which is computed with the PHOENIX code. Below 3,000\,K surface gravity seems to matter, up to a 10-15\% level. This is probably going to mostly affect the near-infrared fluxes. For these, we also use log[g]=4.0 models.
 
 \end{itemize}
          
@@ -107,7 +107,7 @@ $\rho_0^{\rm disk}$ is set by the total disk mass $M_{\rm disk}$. The density is
 
 \begin{center}
   \begin{tabular}{llp{4in}}
-    \texttt{disk.mass} & $\mdisk$ & Sampled in log space between $10^{-8}$ and $0.1$\,$\msun$ \\
+    \texttt{disk.mass} & $\mdisk$ & Sampled in log space between $10^{-8}$ and $0.1$\,$\msun$ [dust] \\
     \texttt{disk.rmax} & $\rmaxd$ & Sampled in log space between 50 and 5000\,AU \\
     \texttt{disk.beta} & $\beta$ & Sampled in linear space between 1.0 and 1.3 \\
     \texttt{disk.p} & $p$ & Sampled in linear space between -2.0 and 0.0 \\
@@ -135,7 +135,7 @@ The parameters added to the model are:
 
 \begin{center}
   \begin{tabular}{llp{4in}}
-    \texttt{envelope.rho0} & $\rho_0^{\rm env}$ ($r_0=1000$\,AU) & Sampled in log space between $10^{-22}$\,g/cm$^3$ and $10^{-14}$\,g/cm$^3$\\
+    \texttt{envelope.rho0} & $\rho_0^{\rm env}$ ($r_0=1000$\,AU) & Sampled in log space between $10^{-24}$\,g/cm$^3$ and $10^{-16}$\,g/cm$^3$ [dust]\\
      \texttt{envelope.power} & $\gamma$ & Sampled in linear space between -1.0 and -2.0 \\
   \end{tabular}
 \end{center}
@@ -144,7 +144,7 @@ The envelope goes out to a radius determined by the density and temperature of t
 
 \item[\textbf{U}] Ulrich envelope. This is the collapse model derived by Ulrich (1976). The density is given by:
 $$
-\rho(r,\theta) = \frac{\mdote}{4\pi\left(G\mstar\rc\right)^{1/2}}\left(\frac{r}{\rc}\right)^{-3/2}\left(1 + \frac{\mu}{\mu_0}\right)^{-1/2}\left(\frac{\mu}{\mu_0} + \frac{2\mu_0^2\rc}{r}\right)^{-1} = \rho_0^{\rm env}\left(\frac{r}{\rc}\right)^{-3/2}\left(1 + \frac{\mu}{\mu_0}\right)^{-1/2}\left(\frac{\mu}{\mu_0} + \frac{2\mu_0^2\rc}{r}\right)^{-1}
+\rho(r,\theta) = \frac{\mdote}{4\pi\left(G\mstar\rc^3\right)^{1/2}}\left(\frac{r}{\rc}\right)^{-3/2}\left(1 + \frac{\mu}{\mu_0}\right)^{-1/2}\left(\frac{\mu}{\mu_0} + \frac{2\mu_0^2\rc}{r}\right)^{-1} = \rho_0^{\rm env}\left(\frac{r}{\rc}\right)^{-3/2}\left(1 + \frac{\mu}{\mu_0}\right)^{-1/2}\left(\frac{\mu}{\mu_0} + \frac{2\mu_0^2\rc}{r}\right)^{-1}
 $$
 where $\mu_0$ is given by the equation for the streamline:
 $$
@@ -154,7 +154,7 @@ The parameters added to the model are:
 
 \begin{center}
   \begin{tabular}{llp{4in}}
-    \texttt{envelope.rho0} & $\rho_0^{\rm env}$ & Sampled in log space between $10^{-26}$ and $10^{-18}$\,g/cm$^3$ \\
+    \texttt{envelope.rho0} & $\rho_0^{\rm env}$ & Sampled in log space between $10^{-24}$ and $10^{-16}$\,g/cm$^3$ [dust] \\
     \texttt{envelope.rc} & $\rc$ & Sampled in log space between 50 and 5000\,AU (same as disk radius if present)  \\
   \end{tabular}
 \end{center}
@@ -187,7 +187,7 @@ The parameters added to the model are:
   \begin{tabular}{llp{4in}}
     \texttt{cavity.power} & $c$ & Sampled in linear space between 1.0 and 2.0 \\
     \texttt{cavity.theta0} & $\theta_0$ & Sampled in linear space between 5. and 50. \\
-    \texttt{cavity.rho0} & $\rho_0^{\rm cav} $ & Sampled in log space between the ambient density and $10^{-18}$\,g/cm$^3$\\
+    \texttt{cavity.rho0} & $\rho_0^{\rm cav} $ & Sampled in log space between the ambient density and $10^{-20}$\,g/cm$^3$ [dust]\\
   \end{tabular}
 \end{center}
 
@@ -231,12 +231,12 @@ The type of ambient medium is indicated by the \textbf{sixth} letter of the set 
 
 \item[\textbf{--}] No ambient medium. This can only be done if there is no envelope.
 
-\item[\textbf{M}] Typical ambient medium ($T_{\rm amb}=10$\,K, $\rho_{\rm amb}=10^2$/cm$^3$) included. The parameters added to the model are:
+\item[\textbf{M}] Typical ambient medium ($T_{\rm amb}=10$\,K, $\rho_{\rm amb}\approx10^2$/cm$^3$) included. The parameters added to the model are:
 
 \begin{center}
   \begin{tabular}{llp{4in}}
     \texttt{ambient.temperature} & $T_{\rm amb}$ & Set to 10\,K \\
-    \texttt{ambient.density} & $\rho_{\rm amb}$ & Set to $10^2$/cm$^3$ \\
+    \texttt{ambient.density} & $\rho_{\rm amb}$ & Set to $10^{-23}$\,g/cm$^3$ [dust] \\
   \end{tabular}
 \end{center}
 
@@ -248,7 +248,8 @@ The type of dust is indicated by the \textbf{seventh} letter of the set name:
 
 \begin{itemize}
 
-\item[\textbf{I}] Typical ISM dust. Since the aim of this grid is to be a starting point for modeling (rather than the ultimate goal), it would make sense to at least compute all the models with ISM-like dust. Define this as a dust type with $a_{\rm min}=0.002$\,$\mu$m, $a_{\rm max}=1$\,$\mu$m, and a power-law distribution with power $p=-3.5$. The composition should be astronomical silicates and carbon in solar abundances, and should not include PAHs.
+\item[\textbf{I}] Typical ISM dust for star formation regions. Since the aim of this grid is to be a starting point for modeling (rather than the ultimate goal), it would make sense to at least compute all the models with ISM-like dust. We use the Weingartner \& Draine (2001) $R_{\rm V}=5.5$ case A Milky-Way dust with C/H = 30ppm, recomputed with the Draine (2003a,b) dielectric functions and abundances. \textbf{[Can't use the one from the website because it doesn't have the maximum linear polarization, so need to use own, but it disagrees a little with the one Bruce Draine has on his website. Have emailed Bruce Draine to ask if he has the full phase functions.]}
+%Define this as a dust type with $a_{\rm min}=0.002$\,$\mu$m, $a_{\rm max}=1$\,$\mu$m, and a power-law distribution with power $p=-3.5$. The composition should be astronomical silicates and carbon in solar abundances, and should not include PAHs.
 
 \item[\textbf{G}] Grain growth and settling. To be determined.
 
@@ -276,34 +277,35 @@ The PAH/VSG properties are indicated by the \textbf{eighth} letter of the set na
 
 The number of models should be a function of the true number of independent parameters (exclude fixed and linked parameters).
 
-\section{Stellar parameters}
-
-
-\section{Envelope outer radius}
-
-In the case where no ambient medium is present, the envelope is truncated at the radius at which the optically thin temperature would reach 2.7K for computational reasons.
-
 \section{Parameters}
 
 \subsection{Grid resolution}
 
-An uncompressed grid of 300 by 400 by 1 with 4-byte precision is 480kb.
+For 1D models, use 400 radial cells. For 2D models, use 400 radial cells and 300 polar cells.
 
 \subsection{Grid extent}
 
-In the absence of an ambient cloud medium, we assume that the envelopes have no edge as such, and we compute the radiation transfer out to a radius that corresponds to that where the optically thin temperature has dropped to $T_0,1$. Then, the SEDs might be incomplete beyond the wavelength corresponding to this temperature. If no envelopes are present, the grid outer radius is set to the disk outer radius.
+We only compute models with envelopes if there is also an ambient medium (power-law envelopes to infinity don't make sense). For disk models and models with only the central source, compute both with and without an ambient medium.
 
-For models that do assume an ambient cloud medium, the grid outer radius is set by the radius at which the optically thin temperature of dust would reach the ambient temperature of the cloud $T_0,2$ or the radius at which the density in the envelope reaches the density of the ambient density of the cloud $\rho_0$, whichever is larger. If the ambient density is non-zero, any densities lower than the ambient density are set to the ambient density. The outer radii in the case of an ambient medium are then increased by a factor of $\sqrt{2}$ so as to be able to do the radiation transfer in a slab that includes all of the medium at temperatures hotter than $T_0,2$.
+For disk models, in the absence of an ambient cloud medium, the grid outer radius is set to the disk outer radius. For stellar models, in the absence of an ambient cloud medium, the grid outer radius is set to 2\,$R_\star$.
 
-In cases where the temperature in the envelope reaches that of the ambient medium before the density of the envelope has reached the density of the ambient medium, we will need to later check that the size of the emission is not close to the physical size of the envelope (otherwise it means a significant amount of flux could be missing). This issue has the potential to occur with any model with no ambient medium since we have to stop at 2.7\,K.
+For models that do assume an ambient cloud medium, the grid outer radius is set by the radius at which the optically thin temperature of dust would reach the ambient temperature of the cloud, or the radius at which the density in the envelope (if present) reaches the density of the ambient density of the cloud $\rho_0$, or the disk radius (if present), whichever is larger. Any densities lower than the ambient density are set to the ambient density (except inside $R_{\rm sub}$). In any case, the outer radii are then increased by a factor of $\sqrt{2}$ so as to be able to do the radiation transfer in a slab that includes all of the medium at temperatures hotter than the ambient medium.
+
+\subsection{Minimum temperature}
+
+The minimum temperature of any dust should be set to 2.725K in the absence of an ambient medium, or to the ambient temperature if an ambient medium is present.
+
+\subsection{Raytracing}
+
+We use raytracing for the source and dust thermal emission.
 
 \subsection{Number of photons}
 
-We choose $10^6$ photons for the temperature calculation, $10^6$ photons for the image/SED iteration, and we use raytracing with $10^6$ photons.
+We choose $1,000,000$ photons for the temperature calculation, for the image/SED iteration, and for the raytracing. For 1D models, we use 1,000 photons for each step.
 
 \subsection{Viewing angles}
 
-The viewing angles will be sampled uniformly between $i=0^\circ$ and $i=90^\circ$ (no $\cos(i)$ sampling). Correcting the bias in fitting results should be simple using weighting. We will use 10 viewing angles. In future, could always treat inclination as a parameter and compute intermediate models between inclinations where the SED changes fast.
+For 1D models, we use a single viewing angle at ($45^\circ$, $45^\circ$). For 2D models, we sample 10 viewing angles between $i=0^\circ$ and $i=90^\circ$ (no $\cos(i)$ sampling). Correcting the bias in fitting results should be simple using weighting.
 
 \subsection{Apertures}
 
@@ -315,7 +317,15 @@ We should definitely use the MRW and PDA. For the MRW, $\gamma=2$ is sensible wi
 
 \subsection{Temperature iterations}
 
-We can specify the criterion quite restrictively and set a maximum number of iterations to 10.
+We can specify the convergence criteria to:
+
+\begin{itemize}
+\item Percentile = 99\%
+\item Absolute threshold = 2
+\item Relative threshold = 1.1
+\end{itemize}
+
+and we set the maximum number of iterations to 10.
 
 \subsection{Dust destruction}
 
@@ -329,7 +339,7 @@ This section discusses what we should output from the grid, and how much storage
 
 \subsection{SEDs}
 
-We can compute SEDs from $10^{-2}$ to $10^4$\,$\mu$m for 250 wavelengths (need to go that low because of the x-rays, unless we can just capture how much flux falls outside the SED range?). We should save I, Q, U, V. These can be saved in 32-bit floating point numbers, as the fluxes aren't that accurate anyway. Save polarization I, Q, U, and V. Save uncertainties on the values. Track photon origin. A lot of SED values are going to be zero, but that should be taken care of by the compression, so won't affect storage.
+We can compute SEDs from $10^{-2}$ to $10^4$\,$\mu$m for 250 wavelengths (need to go that low because of the x-rays, unless we can just capture how much flux falls outside the SED range?). We should save I, Q, U, V. These need to be saved in 64-bit floating point numbers, as the fluxes can be quite large and cause 32-bit overflow. Save polarization I, Q, U, and V. Save uncertainties on the values. Track photon origin. A lot of SED values are going to be zero, but that should be taken care of by the compression, so won't affect storage.
 
 \subsection{Images}
 
@@ -339,11 +349,15 @@ SEDs are best computed using 'binned' SEDs in wavelength, but images are best co
 
 We should probably save all the quantities in 32-bit floating point to save storage space.
 
-Keep specific\_energy\_abs in last iteration. Can compute temperature on the fly from specific\_energy\_abs given the dust properties. This should actually be quite easy because the specific\_energy\_abs is derived from the temperature which has already had minimum/maximum values applies to it.
+Keep \texttt{specific\_energy\_abs} in last iteration. Can compute temperature on the fly from \texttt{\texttt{specific\_energy\_abs}} given the dust properties. This should actually be quite easy because the \texttt{specific\_energy\_abs} is derived from the temperature which has already had minimum/maximum values applies to it.
 
-Also keep density in last iteration, to account for dust destroyed. Could also save the difference between the original and final density, as this will save space when compressed.
+Also keep density difference in last iteration, to keep track of dust destroyed.
 
-\subsection{Caveat}
+\subsection{Compression}
+
+Ensure that all output is compressed to maximum level.
+
+\subsection{Caveats}
 
 \begin{itemize}
 
@@ -354,6 +368,8 @@ Also keep density in last iteration, to account for dust destroyed. Could also s
 \item The modified random walk is used with $\gamma=2$ which means that while the SEDs will be accurate enough, the temperatures may be slightly different compared to the exact solution (see Min et al., 2009)
 
 \item For models that take into account accretion, the gas emission is not included inside the dust sublimation radius. If the gas is optically thin, then the emission is mostly in lines, but this might mean that the results are inaccurate for optically thick gas. In addition, for embedded sources, since the line emission will get reprocessed, this could lead to an underestimated luminosity overall.
+
+\item When we select only photons from the slab, material outside the slab might still contribute to the extinction - but in most cases this is not likely to be important.
 
 \end{itemize}
 

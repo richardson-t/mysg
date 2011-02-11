@@ -68,13 +68,14 @@ def setup_model(parfile, output):
 
         # Settling
         if 'eta' in par['disk']:
-            raise Exception("Dust settling implemented")
+            raise Exception("Dust settling not implemented")
 
         # Accretion luminosity
         if 'lacc' in par['disk']:
-            m.setup_magnetospheric_accretion(par['disk']['lacc'] * lsun,
-                                             par['disk']['rtrunc'],
-                                             par['star']['fspot'], disk)
+            raise Exception("Accretion luminosity not implemented")
+            # m.setup_magnetospheric_accretion(par['disk']['lacc'] * lsun,
+            #                                  par['disk']['rtrunc'],
+            #                                  par['star']['fspot'], disk)
 
     if 'envelope' in par:
 
@@ -89,7 +90,7 @@ def setup_model(parfile, output):
             envelope = m.add_power_law_envelope()
             envelope.power = par['envelope']['power']
             envelope.rho_0 = par['envelope']['rho_0']
-            envelope.r_0 = par['envelope']['r_0']
+            envelope.r_0 = 100. * au
 
         # Set dust
         envelope.dust = SphericalDust(par['envelope']['dust'])
@@ -113,7 +114,7 @@ def setup_model(parfile, output):
         cavity.r_0 = 10000 * au
         cavity.theta_0 = par['cavity']['theta_0']
         cavity.rho_0 = par['cavity']['rho_0']
-        cavity.rho_exp = par['cavity']['rho_exp']
+        cavity.rho_exp = 0.
 
         # Set dust
         cavity.dust = SphericalDust(par['cavity']['dust'])
@@ -132,12 +133,31 @@ def setup_model(parfile, output):
         # optically thin temperature would transition to the ambient medium
         # temperature
         if 'envelope' in par:
-            envelope.rmax = OptThinRadius(ambient.temperature)
+
+            # Find radius where the optically thin temperature drops to the
+            # ambient temperature. We can do this only if we've already set
+            # up all the sources of emission beforehand (which we have)
+            rmax_temp = disk.rmin.evaluate(m.star, envelope.dust)
+
+            # Find radius where the envelope density drops to the ambient density
+            rmax_dens = envelope.outermost_radius(ambient.rho)
+
+            # Pick the largest
+            if rmax_temp < rmax_dens:
+                print "Setting envelope outer radius to that where rho(r) = rho_amb"
+                envelope.rmax = rmax_dens
+            else:
+                print "Setting envelope outer radius to that where T_thin(r) = T_amb"
+                envelope.rmax = OptThinRadius(ambient.temperature)
+
+            ambient.rmax = envelope.rmax
+
+        else:
+
+            ambient.rmax = OptThinRadius(ambient.temperature)
 
         # The inner radius for the ambient medium should be the largest of
         # the inner radii for the disk and envelope
-        if 'disk' in par and 'rmin' in par['disk']:
-            ambient.rmin = par['disk']['rmin'] * OptThinRadius(tsub)
         if 'envelope' in par and 'rmin' in par['envelope']:
             if 'disk' in par and 'rmin' in par['disk']:
                 ambient.rmin = max(par['disk']['rmin'], \
@@ -153,7 +173,7 @@ def setup_model(parfile, output):
         # The ambient medium needs to go out to sqrt(2.) times the envelope
         # radius to make sure the slab is full (don't need to do sqrt(3)
         # because we only need a cylinder along line of sight)
-        ambient.rmax = OptThinRadius(ambient.temperature) * np.sqrt(2.)
+        ambient.rmax *= np.sqrt(2.)
 
         # Make sure that the temperature in the model is always at least
         # the ambient temperature
@@ -161,8 +181,12 @@ def setup_model(parfile, output):
 
     else:
 
+        # Make sure that the temperature in the model is always at least
+        # the CMB temperature
+        m.set_minimum_temperature(2.725)
+
         if 'envelope' in par:
-            envelope.rmax = OptThinRadius(2.725)
+            raise Exception("Can't have an envelope without an ambient medium")
 
     # Use raytracing to improve s/n of thermal/source emission
     m.set_raytracing(True)
@@ -184,9 +208,9 @@ def setup_model(parfile, output):
 
     # Set up grid.
     if ndim == 1:
-        m.set_spherical_polar_grid_auto(399, 1, 1)
+        m.set_spherical_polar_grid_auto(400, 1, 1)
     else:
-        m.set_spherical_polar_grid_auto(399, 199, 1)
+        m.set_spherical_polar_grid_auto(400, 300, 1)
 
     # Find the range of radii spanned by the grid
     rmin, rmax = m.radial_range()
@@ -194,12 +218,26 @@ def setup_model(parfile, output):
     # Set up SEDs
     image = m.add_peeled_images(sed=True, image=False)
     image.set_wavelength_range(250, 1.e-2, 1.e+4)
-    image.set_aperture_range(10, rmin, rmax)
+
+    if 'ambient' in par:
+        image.set_aperture_range(10, rmin, rmax / np.sqrt(2.))
+    else:
+        image.set_aperture_range(10, rmin, rmax)
+
     image.set_output_bytes(8)
     image.set_track_origin(True)
     image.set_uncertainties(True)
-    image.set_viewing_angles(np.linspace(0., 90., 10), np.repeat(45., 10))
-    image.set_depth(-np.inf, np.inf)
+
+    if ndim == 1:
+        image.set_viewing_angles([45.], [45.])
+    else:
+        image.set_viewing_angles(np.linspace(0., 90., 10), np.repeat(45., 10))
+
+    if 'ambient' in par:  # take a slab to avoid spherical geometrical effects
+        w = ambient.rmax / np.sqrt(2.)
+        image.set_depth(-w, w)
+    else:  # don't need to take a slab, as no ambient material or envelope
+        image.set_depth(-np.inf, np.inf)
 
     # Set number of photons
     if ndim == 1:

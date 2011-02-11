@@ -80,7 +80,7 @@ def select_required_ranges(set_name):
 
     # Disk
     if set_name[1] == 'p':  # Passive disk
-        ranges['disk.mass'] = _log_range(1.e-8, 1.e-1)  # M_sun
+        ranges['disk.mass'] = _log_range(1.e-8, 1.e-1)  # M_sun [dust]
         ranges['disk.rmax'] = _log_range(50., 5000.)  # AU
         ranges['disk.beta'] = _linear_range(1.0, 1.3)
         ranges['disk.p'] = _linear_range(-2.0, 0.0)
@@ -90,11 +90,10 @@ def select_required_ranges(set_name):
 
     # Envelope
     if set_name[2] == 'p':  # Power-law envelope
-        ranges['envelope.rho_0'] = _log_range(1.e-22, 1.e-15)  # g/cm^3
-        ranges['envelope.r_0'] = _fixed_value(1.49598e15)  # 100 AU in g/cm^3
+        ranges['envelope.rho_0'] = _log_range(1.e-24, 1.e-16)  # g/cm^3 [dust]
         ranges['envelope.power'] = _linear_range(-2.0, -1.0)
     elif set_name[2] == 'u':  # Ulrich envelope
-        ranges['envelope.rho_0'] = _log_range(1.e-22, 1.e-18)  # g/cm^3
+        ranges['envelope.rho_0'] = _log_range(1.e-24, 1.e-16)  # g/cm^3 [dust]
         if 'disk.rmax' in ranges:
             ranges['envelope.rc'] = _linked_value('disk.rmax')
         else:
@@ -104,15 +103,11 @@ def select_required_ranges(set_name):
     if set_name[3] == 'b':  # Bipolar power-law cavities
         ranges['cavity.power'] = _linear_range(1.0, 2.0)
         ranges['cavity.theta_0'] = _linear_range(5., 50.)  # degrees
-        ranges['cavity.rho_0'] = _fixed_value(0.0)  # g/cm^3
-        ranges['cavity.rho_exp'] = _fixed_value(0.0)
+        ranges['cavity.rho_0'] = _log_range(1.e-23, 1.e-20)  # g/cm^3 [dust] Note: 1e-23 is ambient density
 
     # Inner holes
     if set_name[4] == 's':
-        if set_name[1] != '-':
-            ranges['disk.rmin'] = _fixed_value(1.0)  # R_sub
-        elif set_name[2] != '-':
-            ranges['envelope.rmin'] = _fixed_value(1.0)  # R_sub
+        pass  # defaults to R_sub
     elif set_name[4] == 'h':
         if set_name[1] != '-':
             ranges['disk.rmin'] = _log_range(1., 1000.)  # R_sub
@@ -123,7 +118,7 @@ def select_required_ranges(set_name):
 
     # Ambient medium
     if set_name[5] == 'm':
-        ranges['ambient.density'] = _fixed_value(1.e-22)  # check this value
+        ranges['ambient.density'] = _fixed_value(1.e-23)  # [dust]
         ranges['ambient.temperature'] = _fixed_value(10.)
 
     # Dust
