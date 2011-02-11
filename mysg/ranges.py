@@ -90,7 +90,7 @@ def select_required_ranges(set_name):
 
     # Envelope
     if set_name[2] == 'p':  # Power-law envelope
-        ranges['envelope.rho_0'] = _log_range(1.e-22, 1.e-18)  # g/cm^3
+        ranges['envelope.rho_0'] = _log_range(1.e-22, 1.e-15)  # g/cm^3
         ranges['envelope.r_0'] = _fixed_value(1.49598e15)  # 100 AU in g/cm^3
         ranges['envelope.power'] = _linear_range(-2.0, -1.0)
     elif set_name[2] == 'u':  # Ulrich envelope
