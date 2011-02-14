@@ -137,7 +137,7 @@ def setup_model(parfile, output):
             # Find radius where the optically thin temperature drops to the
             # ambient temperature. We can do this only if we've already set
             # up all the sources of emission beforehand (which we have)
-            rmax_temp = disk.rmin.evaluate(m.star, envelope.dust)
+            rmax_temp = OptThinRadius(ambient.temperature).evaluate(m.star, envelope.dust)
 
             # Find radius where the envelope density drops to the ambient density
             rmax_dens = envelope.outermost_radius(ambient.rho)

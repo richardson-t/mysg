@@ -29,11 +29,11 @@ def _check_set_name(set_name):
             raise Exception("Letter %i cannot be %s" % (i + 1, letter))
 
 
-def sample_set_models(set_name, number, seed=123456789):
+def sample_set_models(set_name, number):
 
     # Ensure reproducibility
-    random.seed(seed)
-    np.random.seed(seed=seed)
+    random.seed(abs(hash(set_name)))
+    np.random.seed(seed=abs(hash(set_name)))
 
     # Read in the ranges
     ranges = read_ranges("models/%s/ranges.conf" % set_name)
