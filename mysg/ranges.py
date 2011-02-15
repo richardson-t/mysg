@@ -102,7 +102,7 @@ def select_required_ranges(set_name):
     # Cavities
     if set_name[3] == 'b':  # Bipolar power-law cavities
         ranges['cavity.power'] = _linear_range(1.0, 2.0)
-        ranges['cavity.theta_0'] = _linear_range(5., 50.)  # degrees
+        ranges['cavity.theta_0'] = _linear_range(0., 60.)  # degrees
         ranges['cavity.rho_0'] = _log_range(1.e-23, 1.e-20)  # g/cm^3 [dust] Note: 1e-23 is ambient density
 
     # Inner holes
