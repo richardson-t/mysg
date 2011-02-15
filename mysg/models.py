@@ -38,6 +38,13 @@ def sample_set_models(set_name, number):
     # Read in the ranges
     ranges = read_ranges("models/%s/ranges.conf" % set_name)
 
+    # Find total number of free parameters
+    n_free = 0
+    for name in ranges:
+        par = ranges[name]
+        if par['sampling'] in ['linear', 'log10']:
+            n_free += 1
+
     # Sample all values that need to be sampled
     values = atpy.Table()
     for name in ranges:
