@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import numpy as np
 
 from hyperion.model import AnalyticalYSOModel
-from hyperion.util.constants import msun, rsun, au, pi, sigma, lsun
+from hyperion.util.constants import msun, rsun, au, pi, sigma
 from hyperion.util.convenience import OptThinRadius
 from hyperion.dust import SphericalDust
 

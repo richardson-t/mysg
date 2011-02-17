@@ -11,8 +11,8 @@ def write_parfile(filename, parameters):
         else:
             f.write("%s = %s\n" % (name, parameters[name]))
     f.close()
-    
-    
+
+
 def read_parfile(filename, nested=False):
     parameters = odict()
     f = open(filename, 'rb')
@@ -34,4 +34,3 @@ def read_parfile(filename, nested=False):
             parameters[key] = value
     f.close()
     return parameters
-    
