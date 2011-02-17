@@ -145,7 +145,7 @@ def setup_model(parfile, output):
             # If disk radius is larger than this, use that instead
             if 'disk' in par:
                 if disk.rmax > rmax_dens:
-                    rmax_den = disk.rmax
+                    rmax_dens = disk.rmax
 
             # Pick the largest
             if rmax_temp < rmax_dens:
