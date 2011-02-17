@@ -275,7 +275,13 @@ The PAH/VSG properties are indicated by the \textbf{eighth} letter of the set na
 
 \section{Number of models}
 
-The number of models should be a function of the true number of independent parameters (exclude fixed and linked parameters).
+The number of models should be a function of the true number of independent parameters $n_{\rm free}$ (exclude fixed and linked parameters). We can use:
+
+$$
+n_{\rm models} = 10000 \times 2^{\max{(0, n_{\rm free}-10)}}
+$$
+
+This ensures always at least 10000 models.
 
 \section{Parameters}
 
