@@ -1,1 +1,5 @@
 build
+doc/description.aux
+doc/description.log
+doc/description.synctex.gz
+doc/temperature_vs_radius-eps-converted-to.pdf
