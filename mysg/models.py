@@ -29,14 +29,14 @@ def _check_set_name(set_name):
             raise Exception("Letter %i cannot be %s" % (i + 1, letter))
 
 
-def sample_set_models(set_name, number):
+def sample_set_models(directory, set_name, number):
 
     # Ensure reproducibility
     random.seed(abs(hash(set_name)))
     np.random.seed(seed=abs(hash(set_name)))
 
     # Read in the ranges
-    ranges = read_ranges("models/%s/ranges.conf" % set_name)
+    ranges = read_ranges("%s/%s/ranges.conf" % (directory, set_name))
 
     # Find total number of free parameters
     n_free = 0
@@ -66,20 +66,20 @@ def sample_set_models(set_name, number):
             raise Exception("Unknown sampling: %s" % par['sampling'])
 
     # Write out parameter files
-    create_dir("models/%s/par" % set_name)
-    create_dir("models/%s/log" % set_name)
-    create_dir("models/%s/input" % set_name)
-    create_dir("models/%s/output" % set_name)
+    create_dir("%s/%s/par" % (directory, set_name))
+    create_dir("%s/%s/log" % (directory, set_name))
+    create_dir("%s/%s/input" % (directory, set_name))
+    create_dir("%s/%s/output" % (directory, set_name))
 
     for i in range(len(values)):
         model_name = random_id()
-        write_parfile("models/%s/par/%s.par" % (set_name, model_name), odict(zip(values.keys(), values[i])))
+        write_parfile("%s/%s/par/%s.par" % (directory, set_name, model_name), odict(zip(values.keys(), values[i])))
 
     # Write out table
-    values.write("models/%s/parameters.hdf5" % set_name, verbose=False)
+    values.write("%s/%s/parameters.hdf5" % (directory, set_name), verbose=False)
 
 
-def make_set_dir(set_name, ranges_file):
+def make_set_dir(directory, set_name):
     '''
     Given the name of a model set and a file containing ranges, set up the
     directory with a subset of the ranges file
@@ -92,7 +92,7 @@ def make_set_dir(set_name, ranges_file):
     ranges = select_required_ranges(set_name)
 
     # Create directory
-    create_dir('models/%s' % set_name)
+    create_dir('%s/%s' % (directory, set_name))
 
     # Write out ranges file
-    write_ranges('models/%s/ranges.conf' % set_name, ranges)
+    write_ranges('%s/%s/ranges.conf' % (directory, set_name), ranges)
