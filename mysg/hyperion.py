@@ -241,9 +241,9 @@ def setup_model(parfile, output):
 
     # Set number of photons
     if ndim == 1:
-        m.set_n_photons(temperature=100, imaging=1000,
-                        raytracing_sources=1000, raytracing_dust=1000,
-                        stats=10)
+        m.set_n_photons(temperature=1000, imaging=1000000,
+                        raytracing_sources=1000000, raytracing_dust=1000000,
+                        stats=100)
     else:
         m.set_n_photons(temperature=1000000, imaging=1000000,
                         raytracing_sources=1000000, raytracing_dust=1000000,
