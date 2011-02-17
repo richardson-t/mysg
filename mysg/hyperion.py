@@ -142,6 +142,11 @@ def setup_model(parfile, output):
             # Find radius where the envelope density drops to the ambient density
             rmax_dens = envelope.outermost_radius(ambient.rho)
 
+            # If disk radius is larger than this, use that instead
+            if 'disk' in par:
+                if disk.rmax > rmax_dens:
+                    rmax_den = disk.rmax
+
             # Pick the largest
             if rmax_temp < rmax_dens:
                 print "Setting envelope outer radius to that where rho(r) = rho_amb"
@@ -248,8 +253,6 @@ def setup_model(parfile, output):
         m.set_n_photons(temperature=1000000, imaging=1000000,
                         raytracing_sources=1000000, raytracing_dust=1000000,
                         stats=10000)
-
-    print 'Dimensionality: ', ndim
 
     # Request 32-bit output
     m.set_output_bytes(4)
