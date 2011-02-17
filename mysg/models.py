@@ -29,7 +29,7 @@ def _check_set_name(set_name):
             raise Exception("Letter %i cannot be %s" % (i + 1, letter))
 
 
-def sample_set_models(directory, set_name, number):
+def sample_set_models(directory, set_name, number_function):
 
     # Ensure reproducibility
     random.seed(abs(hash(set_name)))
@@ -44,6 +44,8 @@ def sample_set_models(directory, set_name, number):
         par = ranges[name]
         if par['sampling'] in ['linear', 'log10']:
             n_free += 1
+
+    number = number_function(n_free)
 
     # Sample all values that need to be sampled
     values = atpy.Table()
