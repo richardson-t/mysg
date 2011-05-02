@@ -1,4 +1,9 @@
 build
+doc/description.bbl
+doc/description.blg
+doc/description.dvi
+doc/description.pdf
+doc/description.ps
 doc/description.aux
 doc/description.log
 doc/description.synctex.gz
