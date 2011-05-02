@@ -246,11 +246,11 @@ def setup_model(parfile, output):
 
     # Set number of photons
     if ndim == 1:
-        m.set_n_photons(temperature=1000, imaging=1000000,
+        m.set_n_photons(initial=1000, imaging=1000000,
                         raytracing_sources=1000000, raytracing_dust=1000000,
                         stats=100)
     else:
-        m.set_n_photons(temperature=1000000, imaging=1000000,
+        m.set_n_photons(initial=1000000, imaging=1000000,
                         raytracing_sources=1000000, raytracing_dust=1000000,
                         stats=10000)
 
@@ -258,14 +258,13 @@ def setup_model(parfile, output):
     m.set_output_bytes(4)
 
     # Only request certain arrays to be output
-    m.conf.output.output_temperature = 'none'
     m.conf.output.output_density = 'none'
-    m.conf.output.output_specific_energy_abs = 'last'
+    m.conf.output.output_specific_energy = 'last'
     m.conf.output.output_n_photons = 'none'
     m.conf.output.output_density_diff = 'last'
 
     # Set number of temperature iterations and convergence criterion
-    m.set_n_temperature_iterations(10)
+    m.set_n_initial_iterations(10)
     m.set_convergence(True, percentile=99.0, absolute=2.0, relative=1.1)
 
     # Write out file
