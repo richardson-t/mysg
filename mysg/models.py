@@ -1,3 +1,6 @@
+import glob
+import os
+import shutil
 import random
 
 import numpy as np
@@ -21,6 +24,19 @@ VALID.append(['-'])
 VALID.append(['-'])
 VALID.append(['-'])
 VALID.append(['-'])
+
+# Set path with dust files
+DATA_PATH = os.path.join(os.path.dirname(__file__), 'data/dust/')
+
+
+def export_dust_files():
+
+    # Create dust directory
+    create_dir('dust')
+
+    # Copy all dust files there
+    for filename in glob.glob(os.path.join(DATA_PATH, '*.hdf5')):
+        shutil.copy(filename, 'dust/' + os.path.basename(filename))
 
 
 def _check_set_name(set_name):

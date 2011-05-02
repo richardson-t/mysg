@@ -123,14 +123,18 @@ def select_required_ranges(set_name):
 
     # Dust
     if set_name[6] == 'i':
-        if set_name[1] != '-':
-            ranges['disk.dust'] = _fixed_value('ISM.hdf5')
-        if set_name[2] != '-':
-            ranges['envelope.dust'] = _fixed_value('ISM.hdf5')
-        if set_name[3] != '-':
-            ranges['cavity.dust'] = _fixed_value('ISM.hdf5')
-        if set_name[5] != '-':
-            ranges['ambient.dust'] = _fixed_value('ISM.hdf5')
+        dust_file = 'dust/d03_5.5_3.0_A.hdf5'
+    else:
+        raise Exception("No dust specified")
+
+    if set_name[1] != '-':
+        ranges['disk.dust'] = _fixed_value(dust_file)
+    if set_name[2] != '-':
+        ranges['envelope.dust'] = _fixed_value(dust_file)
+    if set_name[3] != '-':
+        ranges['cavity.dust'] = _fixed_value(dust_file)
+    if set_name[5] != '-':
+        ranges['ambient.dust'] = _fixed_value(dust_file)
 
     # PAH/VSGs
     if set_name[7] == 'p':

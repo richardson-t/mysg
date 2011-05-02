@@ -13,5 +13,5 @@ setup(name='Model YSO SED Grid',
       author_email='thomas.robitaille@gmail.com',
       packages=['mysg'],
       cmdclass={'build_py': build_py},
-      package_data={'mysg':['data/atmos/*/*.hdf5']}
+      package_data={'mysg':['data/atmos/*/*.hdf5', 'data/dust/*.hdf5']}
      )
