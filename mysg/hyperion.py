@@ -205,9 +205,6 @@ def setup_model(parfile, output):
     # Improve s/n of scattering by forcing the first interaction
     m.set_forced_first_scattering(True)
 
-    # Use slow dust sublimation
-    m.set_dust_sublimation('slow')
-
     # Set physical array output to 32-bit
     m.set_output_bytes(4)
 
