@@ -90,7 +90,7 @@ def setup_model(parfile, output):
             envelope = m.add_power_law_envelope()
             envelope.power = par['envelope']['power']
             envelope.rho_0 = par['envelope']['rho_0']
-            envelope.r_0 = 100. * au
+            envelope.r_0 = 1000. * au
 
         # Set dust
         envelope.dust = SphericalDust(par['envelope']['dust'])
@@ -159,7 +159,28 @@ def setup_model(parfile, output):
 
         else:
 
-            ambient.rmax = OptThinRadius(ambient.temperature)
+
+            if 'disk' in par:
+
+                # Find radius where the optically thin temperature drops to the
+                # ambient temperature. We can do this only if we've already set
+                # up all the sources of emission beforehand (which we have)
+                rmax_temp = OptThinRadius(ambient.temperature).evaluate(m.star, ambient.dust)
+
+                # Find outer disk radius
+                rmax_dens = disk.rmax
+
+                # Pick the largest
+                if rmax_temp < rmax_dens:
+                    print "Setting ambient outer radius to outer disk radius"
+                    ambient.rmax = rmax_dens
+                else:
+                    print "Setting ambient outer radius to that where T_thin(r) = T_amb"
+                    ambient.rmax = OptThinRadius(ambient.temperature)
+
+            else:
+
+                ambient.rmax = OptThinRadius(ambient.temperature)
 
         # The inner radius for the ambient medium should be the largest of
         # the inner radii for the disk and envelope
@@ -244,12 +265,10 @@ def setup_model(parfile, output):
     # Set number of photons
     if ndim == 1:
         m.set_n_photons(initial=1000, imaging=1000000,
-                        raytracing_sources=1000000, raytracing_dust=1000000,
-                        stats=100)
+                        raytracing_sources=1000000, raytracing_dust=1000000)
     else:
         m.set_n_photons(initial=1000000, imaging=1000000,
-                        raytracing_sources=1000000, raytracing_dust=1000000,
-                        stats=10000)
+                        raytracing_sources=1000000, raytracing_dust=1000000)
 
     # Request 32-bit output
     m.set_output_bytes(4)
