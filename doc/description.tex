@@ -248,7 +248,8 @@ The type of dust is indicated by the \textbf{seventh} letter of the set name:
 
 \begin{itemize}
 
-\item[\textbf{I}] Typical ISM dust for star formation regions. Since the aim of this grid is to be a starting point for modeling (rather than the ultimate goal), it would make sense to at least compute all the models with ISM-like dust. We use the Weingartner \& Draine (2001) $R_{\rm V}=5.5$ case A Milky-Way dust with C/H = 30ppm, recomputed with the Draine (2003a,b) dielectric functions and abundances. \textbf{[Can't use the one from the website because it doesn't have the maximum linear polarization, so need to use own, but it disagrees a little with the one Bruce Draine has on his website. Have emailed Bruce Draine to ask if he has the full phase functions.]}
+\item[\textbf{I}] Typical ISM dust for star formation regions. Since the aim of this grid is to be a starting point for modeling (rather than the ultimate goal), it would make sense to at least compute all the models with ISM-like dust. We use the Weingartner \& Draine (2001) $R_{\rm V}=5.5$ case A Milky-Way dust with C/H = 30ppm, recomputed with the Draine (2003a,b) dielectric functions and abundances.
+
 %Define this as a dust type with $a_{\rm min}=0.002$\,$\mu$m, $a_{\rm max}=1$\,$\mu$m, and a power-law distribution with power $p=-3.5$. The composition should be astronomical silicates and carbon in solar abundances, and should not include PAHs.
 
 \item[\textbf{G}] Grain growth and settling. To be determined.
@@ -278,7 +279,7 @@ The PAH/VSG properties are indicated by the \textbf{eighth} letter of the set na
 The number of models should be a function of the true number of independent parameters $n_{\rm free}$ (exclude fixed and linked parameters). We can use:
 
 $$
-n_{\rm models} = 10000 \times 2^{\max{(0, n_{\rm free}-10)}}
+n_{\rm models} = 10000 \times 2^{\max{(0, n_{\rm free}-9)}}
 $$
 
 This ensures always at least 10000 models.
@@ -374,8 +375,6 @@ Ensure that all output is compressed to maximum level.
 \item The modified random walk is used with $\gamma=2$ which means that while the SEDs will be accurate enough, the temperatures may be slightly different compared to the exact solution (see Min et al., 2009)
 
 \item For models that take into account accretion, the gas emission is not included inside the dust sublimation radius. If the gas is optically thin, then the emission is mostly in lines, but this might mean that the results are inaccurate for optically thick gas. In addition, for embedded sources, since the line emission will get reprocessed, this could lead to an underestimated luminosity overall.
-
-\item When we select only photons from the slab, material outside the slab might still contribute to the extinction - but in most cases this is not likely to be important.
 
 \end{itemize}
 
