@@ -19,6 +19,13 @@ def setup_model(parfile, output):
     # Read in model parameters
     par = read_parfile(parfile, nested=True)
 
+    # Find all dust files
+    dust_files = {}
+    for par_name in par:
+        if 'dust' in par[par_name]:
+            dust_file = par[par_name]['dust']
+            dust_files[dust_file] = SphericalDust(dust_file)
+
     # Find dimensionality of problem:
     if 'disk' in par:
         ndim = 2
@@ -58,7 +65,7 @@ def setup_model(parfile, output):
         disk.r_0 = 100. * au
 
         # Set dust
-        disk.dust = SphericalDust(par['disk']['dust'])
+        disk.dust = dust_files[par['disk']['dust']]
 
         # Inner radius
         if 'rmin' in par['disk']:
@@ -93,7 +100,7 @@ def setup_model(parfile, output):
             envelope.r_0 = 1000. * au
 
         # Set dust
-        envelope.dust = SphericalDust(par['envelope']['dust'])
+        envelope.dust = dust_files[par['envelope']['dust']]
 
         # Inner radius
         if 'rmin' in par['envelope']:
@@ -117,7 +124,7 @@ def setup_model(parfile, output):
         cavity.rho_exp = 0.
 
         # Set dust
-        cavity.dust = SphericalDust(par['cavity']['dust'])
+        cavity.dust = dust_files[par['cavity']['dust']]
 
     if 'ambient' in par:
 
@@ -127,7 +134,7 @@ def setup_model(parfile, output):
         # Set the density, temperature, and dust properties
         ambient.rho = par['ambient']['density']
         ambient.temperature = par['ambient']['temperature']
-        ambient.dust = SphericalDust(par['ambient']['dust'])
+        ambient.dust = dust_files[par['ambient']['dust']]
 
         # If there is an envelope, set the outer radius to where the
         # optically thin temperature would transition to the ambient medium
@@ -218,16 +225,13 @@ def setup_model(parfile, output):
     m.set_raytracing(True)
 
     # Use the modified random walk
-    m.set_mrw(True, gamma=2.)
+    m.set_mrw(True, gamma=1.)
 
     # Use the partial diffusion approximation
     m.set_pda(True)
 
     # Improve s/n of scattering by forcing the first interaction
     m.set_forced_first_scattering(True)
-
-    # Set physical array output to 32-bit
-    m.set_output_bytes(4)
 
     # Set up grid.
     if ndim == 1:
@@ -270,7 +274,7 @@ def setup_model(parfile, output):
         m.set_n_photons(initial=1000000, imaging=1000000,
                         raytracing_sources=1000000, raytracing_dust=1000000)
 
-    # Request 32-bit output
+    # Set physical array output to 32-bit
     m.set_output_bytes(4)
 
     # Only request certain arrays to be output
