@@ -11,7 +11,10 @@ from mysg.parameters import read_parfile
 from mysg.atmosphere import interp_atmos
 
 # Set dust sublimation temperature
-tsub = 1600.
+TSUB = 1600.
+
+# Number of viewing angles (for 2D models)
+NVIEW = 9
 
 
 def setup_model(parfile, output):
@@ -69,9 +72,9 @@ def setup_model(parfile, output):
 
         # Inner radius
         if 'rmin' in par['disk']:
-            disk.rmin = par['disk']['rmin'] * OptThinRadius(tsub)
+            disk.rmin = par['disk']['rmin'] * OptThinRadius(TSUB)
         else:
-            disk.rmin = OptThinRadius(tsub)
+            disk.rmin = OptThinRadius(TSUB)
 
         # Settling
         if 'eta' in par['disk']:
@@ -104,9 +107,9 @@ def setup_model(parfile, output):
 
         # Inner radius
         if 'rmin' in par['envelope']:
-            envelope.rmin = par['envelope']['rmin'] * OptThinRadius(tsub)
+            envelope.rmin = par['envelope']['rmin'] * OptThinRadius(TSUB)
         else:
-            envelope.rmin = OptThinRadius(tsub)
+            envelope.rmin = OptThinRadius(TSUB)
 
     if 'cavity' in par:
 
@@ -195,13 +198,13 @@ def setup_model(parfile, output):
             if 'disk' in par and 'rmin' in par['disk']:
                 ambient.rmin = max(par['disk']['rmin'], \
                                    par['envelope']['rmin']) \
-                               * OptThinRadius(tsub)
+                               * OptThinRadius(TSUB)
             else:
-                ambient.rmin = par['envelope']['rmin'] * OptThinRadius(tsub)
+                ambient.rmin = par['envelope']['rmin'] * OptThinRadius(TSUB)
         elif 'disk' in par and 'rmin' in par['disk']:
-            ambient.rmin = par['disk']['rmin'] * OptThinRadius(tsub)
+            ambient.rmin = par['disk']['rmin'] * OptThinRadius(TSUB)
         else:
-            ambient.rmin = OptThinRadius(tsub)
+            ambient.rmin = OptThinRadius(TSUB)
 
         # The ambient medium needs to go out to sqrt(2.) times the envelope
         # radius to make sure the slab is full (don't need to do sqrt(3)
@@ -256,9 +259,18 @@ def setup_model(parfile, output):
     image.set_uncertainties(True)
 
     if ndim == 1:
+
+        # Viewing angle does not matter
         image.set_viewing_angles([45.], [45.])
+
     else:
-        image.set_viewing_angles(np.linspace(0., 90., 10), np.repeat(45., 10))
+
+        # Use stratified random sampling to ensure that all models
+        # contain a viewing angle in each bin, but also ensure we have a
+        # continuum of viewing angles over all models
+        xi = np.random.uniform(0., 90./float(NVIEW), NVIEW)
+        theta = xi + np.linspace(0., 90. * (1. - 1./float(NVIEW)), NVIEW)
+        image.set_viewing_angles(theta, np.repeat(45., NVIEW))
 
     if 'ambient' in par:  # take a slab to avoid spherical geometrical effects
         w = ambient.rmax / np.sqrt(2.)

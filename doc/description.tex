@@ -312,7 +312,7 @@ We choose $1,000,000$ photons for the temperature calculation, for the image/SED
 
 \subsection{Viewing angles}
 
-For 1D models, we use a single viewing angle at ($45^\circ$, $45^\circ$). For 2D models, we sample 10 viewing angles between $i=0^\circ$ and $i=90^\circ$ (no $\cos(i)$ sampling). Correcting the bias in fitting results should be simple using weighting.
+For 1D models, we use a single viewing angle at ($45^\circ$, $45^\circ$). For 2D models, we sample 9 viewing angles between $i=0^\circ$ and $i=90^\circ$ (no $\cos(i)$ sampling). We randomly sample the viewing angles using stratified sampling in bins of $10^\circ$ width (one angle between $0^\circ$ and $10^\circ$, one between $10^\circ$ and $20^\circ$, etc.) Correcting the bias in fitting results should be simple using weighting.
 
 \subsection{Apertures}
 
