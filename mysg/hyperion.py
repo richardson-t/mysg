@@ -173,7 +173,6 @@ def setup_model(parfile, output):
 
         else:
 
-
             if 'disk' in par:
 
                 # Find radius where the optically thin temperature drops to the
@@ -232,7 +231,7 @@ def setup_model(parfile, output):
     m.set_raytracing(True)
 
     # Use the modified random walk
-    m.set_mrw(True, gamma=1.)
+    m.set_mrw(True, gamma=2.)
 
     # Use the partial diffusion approximation
     m.set_pda(True)
