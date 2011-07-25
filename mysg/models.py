@@ -87,8 +87,18 @@ def sample_set_models(directory, set_name, number_function):
     create_dir("%s/%s/output" % (directory, set_name))
 
     for i in range(len(values)):
+
         model_name = random_id()
-        write_parfile("%s/%s/par/%s.par" % (directory, set_name, model_name), odict(zip(values.keys(), values[i])))
+
+        subdir = "%s/%s/par/%s" % (directory, set_name, model_name[0:2].lower())
+
+        if not os.path.exists(subdir):
+            os.mkdir(subdir)
+            os.mkdir(subdir.replace('/par/', '/log/'))
+            os.mkdir(subdir.replace('/par/', '/input/'))
+            os.mkdir(subdir.replace('/par/', '/output/'))
+
+        write_parfile("%s/%s.par" % (subdir, model_name), odict(zip(values.keys(), values[i])))
 
     # Write out table
     values.write("%s/%s/parameters.hdf5" % (directory, set_name), verbose=False)
