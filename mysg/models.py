@@ -29,11 +29,11 @@ VALID.append(['-'])
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data/dust/')
 
 
-def export_dust_files():
+def export_dust_files(directory):
 
     # Copy all dust files there
     for filename in glob.glob(os.path.join(DATA_PATH, '*.hdf5')):
-        shutil.copy(filename, os.path.basename(filename))
+        shutil.copy(filename, directory + '/' + os.path.basename(filename))
 
 
 def _check_set_name(set_name):
