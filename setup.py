@@ -8,7 +8,7 @@ except ImportError:  # Python 2.x
     from distutils.command.build_py import build_py
 
 setup(name='Model YSO SED Grid',
-      version='0.1.0',
+      version='0.1.1',
       author='Thomas Robitaille',
       author_email='thomas.robitaille@gmail.com',
       packages=['mysg'],
