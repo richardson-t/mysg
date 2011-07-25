@@ -115,6 +115,8 @@ $\rho_0^{\rm disk}$ is set by the total disk mass $M_{\rm disk}$. The density is
   \end{tabular}
 \end{center}
 
+The inner and outer walls are set to be spherical (to follow dust sublimation on the inside and the grid walls on the outside).
+
 \item[\textbf{A}] Alpha accretion disk. To be defined.
 
 \end{itemize}
@@ -210,6 +212,8 @@ The parameters added to the model are, where applicable:
   \end{tabular}
 \end{center}
 
+Note that there is no truncation of the disk at e.g. 5\,$R_\star$ since $R_{\rm sub}$ is always larger than $R_\star$, because $T_\star \ge 2000$\,K and using $T_{\rm sub}=1600$\,K we find that $R_{\rm sub} > R_\star$
+
 \item[\textbf{H}] Inner holes of the disk and envelope, if present, can be larger than the dust sublimation radius. The inner radii are expressed as multiples of the dust sublimation radius $r_{\rm sub} = r_{\rm thin}(T_{\rm sub})$ where $T_{\rm sub}=1,600$\,K.
 
 The parameters added to the model are, where applicable:
@@ -231,7 +235,7 @@ The type of ambient medium is indicated by the \textbf{sixth} letter of the set 
 
 \item[\textbf{--}] No ambient medium. This can only be done if there is no envelope.
 
-\item[\textbf{M}] Typical ambient medium ($T_{\rm amb}=10$\,K, $\rho_{\rm amb}\approx10^2$/cm$^3$) included. The parameters added to the model are:
+\item[\textbf{M}] Typical ambient medium ($T_{\rm amb}=10$\,K, $n_{\rm amb}\approx10^2$/cm$^3$) included. The parameters added to the model are:
 
 \begin{center}
   \begin{tabular}{llp{4in}}
@@ -356,7 +360,7 @@ SEDs are best computed using 'binned' SEDs in wavelength, but images are best co
 
 We should probably save all the quantities in 32-bit floating point to save storage space.
 
-Keep \texttt{specific\_energy\_abs} in last iteration. Can compute temperature on the fly from \texttt{\texttt{specific\_energy\_abs}} given the dust properties. This should actually be quite easy because the \texttt{specific\_energy\_abs} is derived from the temperature which has already had minimum/maximum values applies to it.
+Keep \texttt{specific\_energy} in last iteration. Can compute temperature on the fly from \texttt{\texttt{specific\_energy}} given the dust properties. This should actually be quite easy because the \texttt{specific\_energy} is derived from the temperature which has already had minimum/maximum values applies to it.
 
 Also keep density difference in last iteration, to keep track of dust destroyed.
 
