@@ -67,6 +67,10 @@ def setup_model(parfile, output):
         disk.h_0 = par['disk']['h100'] * au
         disk.r_0 = 100. * au
 
+        # Set inner and outer walls to be spherical
+        disk.cylindrical_inner_rim = False
+        disk.cylindrical_outer_rim = False
+
         # Set dust
         disk.dust = dust_files[par['disk']['dust']]
 
