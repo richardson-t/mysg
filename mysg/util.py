@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, division, print_function
+
 import random
 import string
 import os
@@ -31,5 +33,5 @@ def delete_dir(dir_name):
         if reply == 'y':
             os.system("rm -r %s" % dir_name)
         else:
-            print "Aborting..."
+            print("Aborting...")
             sys.exit()

@@ -1,6 +1,6 @@
 import numpy as np
 
-from mysg.odict import odict
+from collections import OrderedDict
 
 
 def write_parfile(filename, parameters):

@@ -4,12 +4,12 @@ import shutil
 import random
 
 import numpy as np
-import atpy
+from astropy.table import Table
 
-from mysg.ranges import read_ranges, write_ranges, select_required_ranges
-from mysg.util import create_dir, random_id
-from mysg.parameters import write_parfile
-from mysg.odict import odict
+from .ranges import read_ranges, write_ranges, select_required_ranges
+from .util import create_dir, random_id
+from .parameters import write_parfile
+from collections import OrderedDict
 
 VALID = []
 VALID.append(['-', 's'])
@@ -61,22 +61,21 @@ def sample_set_models(directory, set_name, number_function):
     number = number_function(n_free)
 
     # Sample all values that need to be sampled
-    values = atpy.Table()
+    values = Table()
     for name in ranges:
         par = ranges[name]
         if par['sampling'] == 'linear':
-            values.add_column(name, np.random.uniform(par['lower'],
-                                                      par['upper'],
-                                                      number))
+            values[name] = np.random.uniform(par['lower'],
+                                             par['upper'],
+                                             number)
         elif par['sampling'] == 'log10':
-            values.add_column(name,
-                              10. ** np.random.uniform(np.log10(par['lower']),
-                                                       np.log10(par['upper']),
-                                                       number))
+            values[name] = 10. ** np.random.uniform(np.log10(par['lower']),
+                                                    np.log10(par['upper']),
+                                                    number)
         elif par['sampling'] in ['fixed', 'str']:
-            values.add_column(name, np.repeat(par['value'], number))
+            values[name] = np.repeat(par['value'], number)
         elif par['sampling'] == 'linked':
-            values.add_column(name, values[ranges[name]['parameter']])
+            values[name] = values[ranges[name]['parameter']]
         else:
             raise Exception("Unknown sampling: %s" % par['sampling'])
 

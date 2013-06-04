@@ -2,7 +2,7 @@ import glob
 import os
 
 import numpy as np
-import atpy
+from astropy.table import Table
 
 # Set path with atmosphere templates
 DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
@@ -11,13 +11,13 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), 'data')
 MODELS_K = glob.glob(os.path.join('%s/atmos/kurucz/' % DATA_PATH, '*.hdf5'))
 TEFF_K = np.array([os.path.basename(model)[2:7] for model in MODELS_K],
                 dtype=np.float32)
-TABLES_K = [atpy.Table(model, verbose=False, masked=False) for model in MODELS_K]
+TABLES_K = [Table.read(model, path="Table") for model in MODELS_K]
 
 # Read in Phoenix atmospheres ready for interpolation
 MODELS_P = glob.glob(os.path.join('%s/atmos/phoenix/' % DATA_PATH, '*.hdf5'))
 TEFF_P = np.array([os.path.basename(model)[2:7] for model in MODELS_P],
                 dtype=np.float32)
-TABLES_P = [atpy.Table(model, verbose=False, masked=False) for model in MODELS_P]
+TABLES_P = [Table.read(model, path="Table") for model in MODELS_P]
 
 
 def interp_atmos(tval):

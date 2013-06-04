@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import unicode_literals, division, print_function
 
 import numpy as np
 
@@ -7,8 +7,8 @@ from hyperion.util.constants import msun, rsun, au, pi, sigma
 from hyperion.util.convenience import OptThinRadius
 from hyperion.dust import SphericalDust
 
-from mysg.parameters import read_parfile
-from mysg.atmosphere import interp_atmos
+from .parameters import read_parfile
+from .atmosphere import interp_atmos
 
 # Set dust sublimation temperature
 TSUB = 1600.
@@ -163,10 +163,10 @@ def setup_model(parfile, output):
 
             # Pick the largest
             if rmax_temp < rmax_dens:
-                print "Setting envelope outer radius to that where rho(r) = rho_amb"
+                print("Setting envelope outer radius to that where rho(r) = rho_amb")
                 envelope.rmax = rmax_dens
             else:
-                print "Setting envelope outer radius to that where T_thin(r) = T_amb"
+                print("Setting envelope outer radius to that where T_thin(r) = T_amb")
                 envelope.rmax = OptThinRadius(ambient.temperature)
 
             ambient.rmax = envelope.rmax
@@ -185,10 +185,10 @@ def setup_model(parfile, output):
 
                 # Pick the largest
                 if rmax_temp < rmax_dens:
-                    print "Setting ambient outer radius to outer disk radius"
+                    print("Setting ambient outer radius to outer disk radius")
                     ambient.rmax = rmax_dens
                 else:
-                    print "Setting ambient outer radius to that where T_thin(r) = T_amb"
+                    print("Setting ambient outer radius to that where T_thin(r) = T_amb")
                     ambient.rmax = OptThinRadius(ambient.temperature)
 
             else:

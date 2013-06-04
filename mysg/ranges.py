@@ -1,4 +1,4 @@
-from mysg.odict import odict
+from collections import OrderedDict
 
 
 def _fixed_value(value):
@@ -44,11 +44,11 @@ def write_ranges(filename, ranges):
 
 def read_ranges(filename):
     "Read a file containing information about ranges for each parameter"
-    ranges = odict()
+    ranges = OrderedDict()
     f = open(filename, 'rb')
     for line in f.readlines():
         name, sampling, details = line.strip().split(None, 2)
-        ranges[name] = odict()
+        ranges[name] = OrderedDict()
         ranges[name]['sampling'] = sampling
         if sampling in ['log10', 'linear']:
             lower, upper = details.split()
@@ -68,7 +68,7 @@ def read_ranges(filename):
 
 def select_required_ranges(set_name):
 
-    ranges = odict()
+    ranges = OrderedDict()
 
     # Add parameters
     required = []
