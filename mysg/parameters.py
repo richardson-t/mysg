@@ -4,9 +4,9 @@ from collections import OrderedDict
 
 
 def write_parfile(filename, parameters):
-    f = open(filename, 'wb')
+    f = open(filename, 'w')
     for name in parameters:
-        if type(parameters[name]) not in [str, np.string_]:
+        if not isinstance(parameters[name], (str, np.string_, np.str_)):
             f.write("%s = %9.3e\n" % (name, parameters[name]))
         else:
             f.write("%s = %s\n" % (name, parameters[name]))
@@ -15,7 +15,7 @@ def write_parfile(filename, parameters):
 
 def read_parfile(filename, nested=False):
     parameters = OrderedDict()
-    f = open(filename, 'rb')
+    f = open(filename, 'r')
     for line in f.readlines():
         key, value = line.strip().split('=')
         try:

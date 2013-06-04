@@ -15,7 +15,7 @@ def combinations(list1, list2):
 
 
 def random_id(length=8):
-    chars = string.letters + string.digits
+    chars = string.ascii_letters + string.digits
     s = ""
     for i in range(length):
         s += random.choice(chars)

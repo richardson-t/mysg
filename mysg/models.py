@@ -72,8 +72,10 @@ def sample_set_models(directory, set_name, number_function):
             values[name] = 10. ** np.random.uniform(np.log10(par['lower']),
                                                     np.log10(par['upper']),
                                                     number)
-        elif par['sampling'] in ['fixed', 'str']:
+        elif par['sampling'] in ['fixed']:
             values[name] = np.repeat(par['value'], number)
+        elif par['sampling'] in ['str']:
+            values[name] = np.repeat(np.string_(par['value']), number)
         elif par['sampling'] == 'linked':
             values[name] = values[ranges[name]['parameter']]
         else:
@@ -100,7 +102,7 @@ def sample_set_models(directory, set_name, number_function):
         write_parfile("%s/%s.par" % (subdir, model_name), OrderedDict(zip(values.keys(), values[i])))
 
     # Write out table
-    values.write("%s/%s/parameters.hdf5" % (directory, set_name), verbose=False)
+    values.write("%s/%s/parameters.hdf5" % (directory, set_name), path='Table')
 
 
 def make_set_dir(directory, set_name):
@@ -114,7 +116,7 @@ def make_set_dir(directory, set_name):
 
     # Select ranges that are actually needed
     ranges = select_required_ranges(set_name)
-
+    
     # Create directory
     create_dir('%s/%s' % (directory, set_name))
 

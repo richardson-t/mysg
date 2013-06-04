@@ -22,7 +22,7 @@ def _linked_value(parameter):
 
 def write_ranges(filename, ranges):
     "Write a file containing information about ranges for each parameter"
-    f = open(filename, 'wb')
+    f = open(filename, 'w')
     for name in ranges:
         par = ranges[name]
         if par['sampling'] in ['log10', 'linear']:
@@ -45,7 +45,7 @@ def write_ranges(filename, ranges):
 def read_ranges(filename):
     "Read a file containing information about ranges for each parameter"
     ranges = OrderedDict()
-    f = open(filename, 'rb')
+    f = open(filename, 'r')
     for line in f.readlines():
         name, sampling, details = line.strip().split(None, 2)
         ranges[name] = OrderedDict()
