@@ -38,4 +38,4 @@ def interp_atmos(tval):
     frac = (tval - teff[i - 1]) / (teff[i] - teff[i - 1])
 
     # Interpolate and return on the fly
-    return t1.nu, t1.fnu * (1. - frac) + t2.fnu * frac
+    return t1['nu'], t1['fnu'] * (1. - frac) + t2['fnu'] * frac

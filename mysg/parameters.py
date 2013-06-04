@@ -9,7 +9,7 @@ def write_parfile(filename, parameters):
         if not isinstance(parameters[name], (str, np.string_, np.str_)):
             f.write("%s = %9.3e\n" % (name, parameters[name]))
         else:
-            f.write("%s = %s\n" % (name, parameters[name]))
+            f.write("%s = %s\n" % (name, parameters[name].decode('ascii')))
     f.close()
 
 

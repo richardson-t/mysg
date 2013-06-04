@@ -303,5 +303,5 @@ def setup_model(parfile, output):
     m.set_convergence(True, percentile=99.0, absolute=2.0, relative=1.1)
 
     # Write out file
-    m.write(copy_dust=False, absolute_paths=False,
+    m.write(copy=False, absolute_paths=False,
             physics_dtype=np.float32, wall_dtype=float)
