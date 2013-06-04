@@ -14,7 +14,7 @@ def write_parfile(filename, parameters):
 
 
 def read_parfile(filename, nested=False):
-    parameters = odict()
+    parameters = OrderedDict()
     f = open(filename, 'rb')
     for line in f.readlines():
         key, value = line.strip().split('=')
@@ -27,7 +27,7 @@ def read_parfile(filename, nested=False):
             components = key.split('.')
             for component in components[:-1]:
                 if component not in p:
-                    p[component] = odict()
+                    p[component] = OrderedDict()
                 p = p[component]
             p[components[-1]] = value
         else:

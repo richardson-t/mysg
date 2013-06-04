@@ -97,7 +97,7 @@ def sample_set_models(directory, set_name, number_function):
             os.mkdir(subdir.replace('/par/', '/input/'))
             os.mkdir(subdir.replace('/par/', '/output/'))
 
-        write_parfile("%s/%s.par" % (subdir, model_name), odict(zip(values.keys(), values[i])))
+        write_parfile("%s/%s.par" % (subdir, model_name), OrderedDict(zip(values.keys(), values[i])))
 
     # Write out table
     values.write("%s/%s/parameters.hdf5" % (directory, set_name), verbose=False)
