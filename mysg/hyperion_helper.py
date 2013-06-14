@@ -7,6 +7,8 @@ from hyperion.util.constants import msun, rsun, au, pi, sigma
 from hyperion.util.convenience import OptThinRadius
 from hyperion.dust import SphericalDust
 
+from astropy import log
+
 from .parameters import read_parfile
 from .atmosphere import interp_atmos
 
@@ -28,16 +30,21 @@ def setup_model(parfile, output):
         if 'dust' in par[par_name]:
             dust_file = par[par_name]['dust']
             dust_files[dust_file] = SphericalDust(dust_file)
+            dust_files[dust_file].set_sublimation_temperature('fast', temperature=TSUB)
 
     # Find dimensionality of problem:
     if 'disk' in par:
         ndim = 2
+        optimize = False
     elif 'cavity' in par:
         ndim = 2
+        optimize = False
     elif 'envelope' in par and 'rc' in par['envelope']:
         ndim = 2
+        optimize = False
     else:
         ndim = 1
+        optimize = True
 
     # Set up model
     m = AnalyticalYSOModel(output)
@@ -283,7 +290,7 @@ def setup_model(parfile, output):
 
     # Set number of photons
     if ndim == 1:
-        m.set_n_photons(initial=1000, imaging=1000000,
+        m.set_n_photons(initial=100, imaging=1000000,
                         raytracing_sources=1000000, raytracing_dust=1000000)
     else:
         m.set_n_photons(initial=1000000, imaging=1000000,
@@ -291,6 +298,9 @@ def setup_model(parfile, output):
 
     # Set physical array output to 32-bit
     m.set_output_bytes(4)
+
+    # Set maximum of 10^8 interactions per photon
+    m.set_max_interactions(1e8)
 
     # Only request certain arrays to be output
     m.conf.output.output_density = 'none'
@@ -302,6 +312,17 @@ def setup_model(parfile, output):
     m.set_n_initial_iterations(10)
     m.set_convergence(True, percentile=99.0, absolute=2.0, relative=1.1)
 
+    # Check whether the model is very optically thick
+    from hyperion.model.helpers import tau_to_radius
+    mf = m.to_model()
+    surface = tau_to_radius(mf, tau=1., wav=5e3)
+    rtau = np.min(surface)
+
+    if rtau > rmin and optimize:
+        log.warn("tau_5mm > 1 for all (theta,phi) values - truncating inner envelope from {0:.3f}au to {1:.3f}au".format(mf.grid.r_wall[1] / au, rtau / au))
+        for item in mf.grid['density']:
+            item.array[mf.grid.gr < rtau] = 0.
+
     # Write out file
-    m.write(copy=False, absolute_paths=False,
-            physics_dtype=np.float32, wall_dtype=float)
+    mf.write(copy=False, absolute_paths=False,
+             physics_dtype=np.float32, wall_dtype=float)
