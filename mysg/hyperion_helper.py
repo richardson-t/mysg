@@ -255,9 +255,12 @@ def setup_model(parfile, output):
     # Find the range of radii spanned by the grid
     rmin, rmax = m.radial_range()
 
+    # Use monochromatic RT (better for dense models as it avoids trapped photons)
+    m.set_monochromatic(True, wavelengths=np.logspace(-2, 4., 250))
+
     # Set up SEDs
     image = m.add_peeled_images(sed=True, image=False)
-    image.set_wavelength_range(250, 1.e-2, 1.e+4)
+    image.set_wavelength_range(250, 1, 250)
 
     if 'ambient' in par:
         image.set_aperture_range(20, rmin, rmax / np.sqrt(2.))
@@ -290,17 +293,17 @@ def setup_model(parfile, output):
 
     # Set number of photons
     if ndim == 1:
-        m.set_n_photons(initial=100, imaging=1000000,
-                        raytracing_sources=1000000, raytracing_dust=1000000)
+        m.set_n_photons(initial=100, imaging_sources=10000, imaging_dust=10000,
+                            raytracing_sources=10000, raytracing_dust=10000)
     else:
-        m.set_n_photons(initial=1000000, imaging=1000000,
+        m.set_n_photons(initial=1000000, imaging_sources=10000, imaging_dust=10000
                         raytracing_sources=1000000, raytracing_dust=1000000)
 
     # Set physical array output to 32-bit
     m.set_output_bytes(4)
 
     # Set maximum of 10^8 interactions per photon
-    m.set_max_interactions(1e8)
+    m.set_max_interactions(1e7)
 
     # Only request certain arrays to be output
     m.conf.output.output_density = 'none'
