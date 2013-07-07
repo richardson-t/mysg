@@ -123,7 +123,7 @@ def select_required_ranges(set_name):
 
     # Dust
     if set_name[6] == 'i':
-        dust_file = 'd03_5.5_3.0_A.hdf5'
+        dust_file = 'd03_5.5_3.0_A_sub.hdf5'
     else:
         raise Exception("No dust specified")
 
