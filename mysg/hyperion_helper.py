@@ -303,7 +303,7 @@ def setup_model(parfile, output):
     m.set_output_bytes(4)
 
     # Set maximum of 10^8 interactions per photon
-    m.set_max_interactions(1e7)
+    m.set_max_interactions(1e8)
 
     # Only request certain arrays to be output
     m.conf.output.output_density = 'none'
