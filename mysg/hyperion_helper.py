@@ -315,6 +315,9 @@ def setup_model(parfile, output):
     m.set_n_initial_iterations(10)
     m.set_convergence(True, percentile=99.0, absolute=2.0, relative=1.1)
 
+    # Don't copy the full input into the output files
+    m.set_copy_input(False)
+
     # Check whether the model is very optically thick
     from hyperion.model.helpers import tau_to_radius
     mf = m.to_model()
