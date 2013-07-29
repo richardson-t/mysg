@@ -30,7 +30,6 @@ def setup_model(parfile, output):
         if 'dust' in par[par_name]:
             dust_file = par[par_name]['dust']
             dust_files[dust_file] = SphericalDust(dust_file)
-            dust_files[dust_file].set_sublimation_temperature('fast', temperature=TSUB)
 
     # Find dimensionality of problem:
     if 'disk' in par:
