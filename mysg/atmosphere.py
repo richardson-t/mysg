@@ -28,6 +28,11 @@ def interp_atmos(tval):
     else:
         teff, tables = TEFF_K, TABLES_K
 
+    # We can't rely on the order being correct here
+    order = np.argsort(teff)
+    teff = teff[order]
+    tables = [tables[i] for i in order]
+
     # Locate the temperature in the array
     i = np.searchsorted(teff, tval)
 
