@@ -296,7 +296,7 @@ def setup_model(parfile, output):
                             raytracing_sources=10000, raytracing_dust=10000)
     else:
         m.set_n_photons(initial=1000000, imaging_sources=10000, imaging_dust=10000,
-                        raytracing_sources=1000000, raytracing_dust=1000000)
+                        raytracing_sources=10000, raytracing_dust=1000000)
 
     # Set physical array output to 32-bit
     m.set_output_bytes(4)
