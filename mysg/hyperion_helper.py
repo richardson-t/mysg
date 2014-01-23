@@ -254,12 +254,9 @@ def setup_model(parfile, output):
     # Find the range of radii spanned by the grid
     rmin, rmax = m.radial_range()
 
-    # Use monochromatic RT (better for dense models as it avoids trapped photons)
-    m.set_monochromatic(True, wavelengths=np.logspace(-2, 4., 250))
-
     # Set up SEDs
     image = m.add_peeled_images(sed=True, image=False)
-    image.set_wavelength_range(250, 1, 250)
+    image.set_wavelength_range(200, 0.01, 5000.)
 
     if 'ambient' in par:
         image.set_aperture_range(20, rmin, rmax / np.sqrt(2.))
@@ -292,11 +289,11 @@ def setup_model(parfile, output):
 
     # Set number of photons
     if ndim == 1:
-        m.set_n_photons(initial=100, imaging_sources=10000, imaging_dust=10000,
-                            raytracing_sources=10000, raytracing_dust=10000)
+        m.set_n_photons(initial=100, imaging=1e6,
+                        raytracing_sources=10000, raytracing_dust=1e6)
     else:
-        m.set_n_photons(initial=1000000, imaging_sources=10000, imaging_dust=10000,
-                        raytracing_sources=10000, raytracing_dust=1000000)
+        m.set_n_photons(initial=1000000, imaging=1e6,
+                        raytracing_sources=10000, raytracing_dust=1e6)
 
     # Set physical array output to 32-bit
     m.set_output_bytes(4)
@@ -318,15 +315,19 @@ def setup_model(parfile, output):
     m.set_copy_input(False)
 
     # Check whether the model is very optically thick
-    from hyperion.model.helpers import tau_to_radius
-    mf = m.to_model()
-    surface = tau_to_radius(mf, tau=1., wav=5e3)
-    rtau = np.min(surface)
 
-    if rtau > rmin and optimize:
-        log.warn("tau_5mm > 1 for all (theta,phi) values - truncating inner envelope from {0:.3f}au to {1:.3f}au".format(mf.grid.r_wall[1] / au, rtau / au))
-        for item in mf.grid['density']:
-            item.array[mf.grid.gr < rtau] = 0.
+    if 'envelope' in par:
+
+        from hyperion.model.helpers import tau_to_radius
+        mf = m.to_model()
+        surface = tau_to_radius(mf, tau=1., wav=5e3)
+        rtau = np.min(surface)
+
+        if rtau > rmin and optimize:
+            log.warn("tau_5mm > 1 for all (theta,phi) values - truncating "
+                     "inner envelope from {0:.3f}au to {1:.3f}au".format(mf.grid.r_wall[1] / au, rtau / au))
+            for item in mf.grid['density']:
+                item.array[mf.grid.gr < rtau] = 0.
 
     # Write out file
     mf.write(copy=False, absolute_paths=False,
