@@ -266,6 +266,7 @@ def setup_model(parfile, output):
     image.set_output_bytes(8)
     image.set_track_origin(True)
     image.set_uncertainties(True)
+    image.set_stokes(True)
 
     if ndim == 1:
 
@@ -316,10 +317,11 @@ def setup_model(parfile, output):
 
     # Check whether the model is very optically thick
 
+    mf = m.to_model()
+
     if 'envelope' in par:
 
         from hyperion.model.helpers import tau_to_radius
-        mf = m.to_model()
         surface = tau_to_radius(mf, tau=1., wav=5e3)
         rtau = np.min(surface)
 
