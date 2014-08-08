@@ -60,6 +60,8 @@ def setup_model(parfile, output):
     nu, fnu = interp_atmos(par['star']['temperature'])
     m.star.spectrum = (nu, fnu)
 
+    subtract_from_ambient = []
+
     if 'disk' in par:
 
         # Add the flared disk component
@@ -97,6 +99,8 @@ def setup_model(parfile, output):
             #                                  par['disk']['rtrunc'],
             #                                  par['star']['fspot'], disk)
 
+        subtract_from_ambient.append(disk)
+
     if 'envelope' in par:
 
         if 'rc' in par['envelope']:  # Ulrich envelope
@@ -121,6 +125,8 @@ def setup_model(parfile, output):
         else:
             envelope.rmin = OptThinRadius(TSUB)
 
+        subtract_from_ambient.append(envelope)
+
     if 'cavity' in par:
 
         if not 'envelope' in par:
@@ -139,10 +145,12 @@ def setup_model(parfile, output):
         # Set dust
         cavity.dust = dust_files[par['cavity']['dust']]
 
+        subtract_from_ambient.append(cavity)
+
     if 'ambient' in par:
 
         # Add the ambient medium contribution
-        ambient = m.add_ambient_medium()
+        ambient = m.add_ambient_medium(subtract=subtract_from_ambient)
 
         # Set the density, temperature, and dust properties
         ambient.rho = par['ambient']['density']
