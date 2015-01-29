@@ -142,6 +142,10 @@ def setup_model(parfile, output):
         cavity.rho_0 = par['cavity']['rho_0']
         cavity.rho_exp = 0.
 
+        # Very important is that the cavity density should not be *larger* than
+        # the envelope density.
+        cavity.cap_to_envelope_density = True
+
         # Set dust
         cavity.dust = dust_files[par['cavity']['dust']]
 
