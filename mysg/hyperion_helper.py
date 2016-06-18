@@ -19,7 +19,7 @@ TSUB = 1600.
 NVIEW = 9
 
 
-def setup_model(parfile, output):
+def setup_model(parfile, output, imaging=True):
 
     # Read in model parameters
     par = read_parfile(parfile, nested=True)
@@ -301,12 +301,24 @@ def setup_model(parfile, output):
         image.set_depth(-np.inf, np.inf)
 
     # Set number of photons
-    if ndim == 1:
-        m.set_n_photons(initial=100, imaging=1e6,
-                        raytracing_sources=10000, raytracing_dust=1e6)
+
+    if imaging:
+        n_imaging=1e6
+        n_raytracing_sources=10000
+        n_raytracing_dust=1e6
     else:
-        m.set_n_photons(initial=1000000, imaging=1e6,
-                        raytracing_sources=10000, raytracing_dust=1e6)
+        n_imaging=0
+        n_raytracing_sources=0
+        n_raytracing_dust=0
+
+    if ndim == 1:
+        m.set_n_photons(initial=100, imaging=n_imaging,
+                        raytracing_sources=n_raytracing_sources,
+                        raytracing_dust=n_raytracing_dust)
+    else:
+        m.set_n_photons(initial=1000000, imaging=n_imaging,
+                        raytracing_sources=n_raytracing_sources,
+                        raytracing_dust=n_raytracing_dust)
 
     # Set physical array output to 32-bit
     m.set_output_bytes(4)
