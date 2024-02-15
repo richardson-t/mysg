@@ -292,7 +292,8 @@ def setup_model(parfile, output, imaging=True):
         # continuum of viewing angles over all models
         xi = np.random.uniform(0., 90./float(NVIEW), NVIEW)
         theta = xi + np.linspace(0., 90. * (1. - 1./float(NVIEW)), NVIEW)
-        image.set_viewing_angles(theta, np.repeat(45., NVIEW))
+        theta_even = np.linspace(0.,80.,9) + 5
+        image.set_viewing_angles(theta_even, np.repeat(45., NVIEW))
 
     if 'ambient' in par:  # take a slab to avoid spherical geometrical effects
         w = ambient.rmax / np.sqrt(2.)
